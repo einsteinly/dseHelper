@@ -86,10 +86,7 @@ This call returns all the questions in the database.
 ##Databse management
 
 ###Credentials
-- $servername = "mysql.hostinger.co.uk";
-- $username = "u185339700_exam";
-- $password = "_MYsql";
-- $db = "u185339700_exam";
+- HIDDEN
 
 ###List of Databases
 - user_list
