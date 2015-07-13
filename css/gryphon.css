@@ -1,0 +1,105 @@
+/*!
+ * Gryphon Corporation
+ */
+@font-face{
+	font-family: MyriadProLight;
+	src:url(/fonts/font.otf);
+}
+h1,h2,h3,h4,h5,h6,p{
+	text-align:center;
+	white-space:normal; /* Text wrapping*/
+
+}
+pre{
+    border: none;
+    background-color: inherit;
+    font-family: inherit;
+    color: inherit;
+    line-height: inherit;
+    text-align: inherit;
+}
+
+
+@-webkit-keyframes about_back1_ani
+/* Safari and Chrome */
+ {
+    0% {
+        background-position:100% 100%;
+    }
+    100% {
+        background-position:100% 10%;
+    }
+
+}
+@media(min-width:768px) {
+	p{
+		font-size:12pt;
+		line-height:130%;
+	}
+    b,i {
+        font-size:14pt;
+    }
+    .navbar-fixed-top {
+        padding: 0px 0px;
+        -webkit-transition: all .3s;
+        -moz-transition: all .3s;
+        transition: all .3s;
+        font-size: 12pt;
+    }
+
+    .navbar-fixed-top .navbar-brand {
+        /*
+        font-size: 2em;
+
+        -webkit-transition: all .3s;
+        -moz-transition: all .3s;
+        transition: all .3s;
+        */
+    }
+
+    .navbar-fixed-top.navbar-shrink {
+        font-size: 10pt;
+    }
+
+    .navbar-fixed-top.navbar-shrink .navbar-brand {
+    /*    font-size: 1.5em;
+    */
+    }
+	.card_word{
+		padding-top:15%;
+		padding-bottom:15%;
+		width:100%;
+		font-size:500%;
+		white-space:normal;
+        margin-top:2%;
+        margin-bottom: 2%;
+	}
+	.card_reveal{
+		padding-top:5%;
+		padding-bottom:5%;
+		width:100%;
+		white-space:normal;
+        margin-top:2%;
+        margin-bottom: 2%;
+
+	}
+}
+
+@media (min-width:500px) and (max-width:768px) {
+
+    p, b,i{
+        font-size:12pt;
+        line-height:130%;
+    }
+}
+
+@media (max-width:500px) {
+
+    p, b,i{
+        font-size:12pt;
+        line-height:150%;
+    }
+
+}
+
+
