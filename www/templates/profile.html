@@ -1,0 +1,33 @@
+<ion-view view-title="Profile">
+  <ion-content>
+  	<center>
+    <h1><i class="fa fa-user"></i> {{user}} </h1>
+    </center>
+    <div>
+    	<p>To edit your email or password, fill in the respective fields below. </p>
+    	<label class='item item-input'>
+    		<span class='input-label'>Unique User ID</span>
+    		<p disabled="true" type='text' >{{user_profile.id}} </p>
+    	</label>
+
+    	<label class='item item-input'>
+    		<span class='input-label'>Email Address</span>
+    		<input type='text' value="{{user_profile.email}}">
+    	</label>
+
+    	<label class='item item-input'>
+    		<span class='input-label'>Change Password</span>
+    		<input type='password' ng-model="input.password">
+    	</label>
+
+    	<label class='item item-input'>
+    		<span class='input-label'>Confirm Password</span>
+    		<input type='password' ng-model="input.password2">
+    	</label>
+
+    	<button class='button button-block button-royal'>
+    	Submit
+    	</button>
+    </div>
+  </ion-content>
+</ion-view>

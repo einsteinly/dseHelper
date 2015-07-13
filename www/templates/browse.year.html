@@ -1,0 +1,15 @@
+<ion-view view-title="Browsing questions from {{year}} ">
+  <ion-content>
+    <ul class='list'>
+
+    	<a class='item' ng-repeat="question in questions" href='#/app/browse/{{year}}/{{question.id}}'>
+
+        {{question.question}}
+        <span class='badge'> {{question.rating_count}} ratings {{question.comment_count}} comments</span>
+
+        </a>
+
+    </ul>
+  </ion-content>
+</ion-view>
+

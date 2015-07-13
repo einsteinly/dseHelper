@@ -1,0 +1,40 @@
+<ion-view view-title="{{question.question}} -- {{year}} ">
+  <ion-content>
+
+    <div class="video-container">
+		<iframe width="{{question.youtube_width}}" height="{{question.youtube_height}}" src="{{trustSrc(question.youtube_link)}} " frameborder="0" allowfullscreen></iframe>		
+	</div>
+	<button class='button button-block button-royal' ng-click='download()'> Download Audio Version </button>
+
+	<button class='button button-block button-assertive' ng-click='comment()'> Add a comment </button>
+
+	<div class='card' ng-repeat="value in question.speaker_assoc track by $index">
+		<div class='item item-divider'>
+		Speaker {{$index+1}}: {{value}}  
+		<span> <rating ng-model="rate[$index]" max='max' readonly='true'></rating></span>
+		</div>
+		<span class='line-break'>{{question.profile_assoc[$index]}}</span>
+	</div>
+
+	<div class='list card' ng-repeat='comment in question.comment_assoc track by $index'>
+		<div class='item item-divider'>
+		Comments by
+		</div>
+
+		<div class='item item-avatar' >
+		<h2><span><i class='fa fa-user fa-fw'></i></span> {{comment.user}}</h2>
+		</div>
+		<div class='item item-body'>
+			<div class='list'>
+				<div class='item item-text-wrap' ng-repeat='rate in question.rating_assoc[$index].rating track by $index'>
+				<span class="badge badge-assertive">{{rate}}</span>
+				For Speaker {{$index+1}}: <br/>
+				<span class='line-break'>{{comment.comment[$index]}}</span>
+				</div>
+			</div>
+		</div>
+
+	</div>
+  </ion-content>
+</ion-view>
+
