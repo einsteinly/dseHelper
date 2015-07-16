@@ -31,7 +31,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
     $ionicLoading.show({
-      template: '<i class="fa fa-spinner fa-pulse"></i> Connecting to our server...'
+      template: '<i class="fa fa-spinner fa-pulse"></i> 連接中...'
     });
 
     $http.post($core.APILocation,{JSON:1,action:'login',user:$scope.loginData.username,password:$scope.loginData.password})
@@ -40,8 +40,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
         $ionicLoading.hide();
 
         if(data!=1) $ionicPopup.alert({
-            title: 'Log in ERROR' ,
-            template: 'The combination of username and password that you have entered is invalid. Please try again.'
+            title: '無法登陸' ,
+            template: '請重新輸入帳戶密碼.'
         });
         else 
           {
@@ -56,8 +56,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
   $scope.signout = function(){
     $ionicPopup.confirm({
-      title: 'Sign out',
-      template: "Are you sure you want to sign out?"
+      title: '登出',
+      template: "確認登出?"
     }).then(function(response) {
       if(response){
       $account.signout();
@@ -78,7 +78,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
 .controller('browseController', function($scope,$http,$core,$ionicLoading){
   $ionicLoading.show({
-      template: "<i class='fa fa-pulse fa-spinner'></i> Loading..."
+      template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
     });
     
     $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
@@ -99,7 +99,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
   $scope.year = $stateParams.year;
 
   $ionicLoading.show({
-      template: "<i class='fa fa-pulse fa-spinner'></i> Loading..."
+      template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
     });
     
   $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
@@ -141,7 +141,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
   $scope.questionID = $stateParams.questionID
 
   $ionicLoading.show({
-      template: "<i class='fa fa-pulse fa-spinner'></i> Loading..."
+      template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
     });
     
   $http.get($core.APILocation ,{params:{ public:true, action:'get_question_by_id', id:$stateParams.questionID}}).success(function(data){
@@ -191,8 +191,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
   $scope.download = function(){
     $ionicPopup.confirm({
-      title: "Download",
-      template: "Are you sure you want to download this MP3?"
+      title: "下載",
+      template: "確認下載 MP3 文件?"
     }).then(function(response){
       var mp3_url = "http://exam.lixiapps.com/api/mp3/"+$scope.question.mp3_url;
       if(response) 
@@ -216,7 +216,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
     if($account.user!=null)
     {
       $ionicLoading.show({
-        template: "<i class='fa fa-spinner fa-pulse'></i> Connecting to our log-in server using your credentials"
+        template: "<i class='fa fa-spinner fa-pulse'></i> 正在登陸"
       });
 
       $account.login(function(){//success callback
@@ -229,8 +229,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
     else {
       $ionicPopup.confirm({
-        title: "Log in required",
-        template: "Only registered teachers can add a comment. If you are a teacher, click 'YES' to proceed to the log-in page. "
+        title: "請登入",
+        template: "只有以註冊老師才可以評論. 如果你已經註冊, 請按 'YES' 鍵前往登錄介面. "
       }).then(function(response){
         if(response) $scope.$parent.login();
       });
@@ -240,15 +240,15 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
   $scope.submitComment = function(){
     $ionicPopup.confirm({
-      title: "Submit comment",
-      template: "Are you sure that you want to submit this comment?"
+      title: "提交評論",
+      template: "確認提交?"
     }).then(function(response){
       if(response)
       {
         $http.post($core.APILocation,{JSON:1, action:'insert_comment',id:$stateParams.questionID, comment1:$scope.comment.comment[0],comment2:$scope.comment.comment[1],comment3:$scope.comment.comment[2],comment4:$scope.comment.comment[3],rating1:$scope.comment.rating[0],rating2:$scope.comment.rating[1],rating3:$scope.comment.rating[2],rating4:$scope.comment.rating[3]}).success(function(){
           $ionicPopup.alert({
-            title: 'Success',
-            template: "The comment has been successfully stored into our servers."
+            title: '成功',
+            template: "你的評論已被成功上載."
           });
         });
       }
@@ -313,7 +313,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
     $scope.hidePlayer = $rootScope.hidePlayer;
     function getFileSystem(callback)
     {
-      $rootScope.show('Accessing Filesystem.. Please wait');
+      $rootScope.show('正在連結服務器,請稍後...');
       $window.requestFileSystem($window.LocalFileSystem.PERSISTENT, 0, function(fs) {
           //console.log("fs", JSON.stringify(fs));
           
@@ -406,7 +406,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
               });
             }
           } else {
-            $rootScope.toggle('Oops! We cannot play this file :/', 3000);
+            $rootScope.toggle('對不起,我們無法播放此文件 :/', 3000);
           }
  
         }
@@ -429,7 +429,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
                 if (fs.fullPath !== '/Downloads/') {
                   arr.push({
                     id: 0,
-                    name: '.. One level up',
+                    name: '.. 返回',
                     actualName: fs.name,
                     isDirectory: false,
                     isUpNav: true,
@@ -444,7 +444,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
  
                 $ionicScrollDelegate.scrollTop();
               } else {
-                $rootScope.toggle(fs.name + ' folder is empty!', 2000);
+                $rootScope.toggle(fs.name + ' 文件夾為空', 2000);
               }
             },
             function(error) {

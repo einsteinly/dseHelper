@@ -4,29 +4,24 @@
     <h1><i class="fa fa-user"></i> {{user}} </h1>
     </center>
     <div>
-    	<p>To edit your email or password, fill in the respective fields below. </p>
+    	<p>請輸入資料 </p>
     	<label class='item item-input'>
-    		<span class='input-label'>Unique User ID</span>
-    		<p disabled="true" type='text' >{{user_profile.id}} </p>
-    	</label>
-
-    	<label class='item item-input'>
-    		<span class='input-label'>Email Address</span>
+    		<span class='input-label'>郵箱</span>
     		<input type='text' value="{{user_profile.email}}">
     	</label>
 
     	<label class='item item-input'>
-    		<span class='input-label'>Change Password</span>
+    		<span class='input-label'>新密碼</span>
     		<input type='password' ng-model="input.password">
     	</label>
 
     	<label class='item item-input'>
-    		<span class='input-label'>Confirm Password</span>
+    		<span class='input-label'>確認密碼</span>
     		<input type='password' ng-model="input.password2">
     	</label>
 
     	<button class='button button-block button-royal'>
-    	Submit
+    	提交
     	</button>
     </div>
   </ion-content>

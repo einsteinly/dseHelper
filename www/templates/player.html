@@ -1,32 +1,31 @@
 <ion-modal-view>
     <ion-header-bar class="bar-assertive">
-        <h1 class="title">Media Player</h1>
+        <h1 class="title">播放器</h1>
         <div class="buttons">
-            <button class="button button-clear" ng-click="hidePlayer()">Hide</button>
+            <button class="button button-clear" ng-click="hidePlayer()">縮小</button>
         </div>
     </ion-header-bar>
     <ion-content class="padding">
         <div class="list card">
             <div class="item">
                 <h2><i class="icon ion-ios-musical-notes"></i> {{name || '--'}}</h2>
-                <p>{{path || '--'}}</p>
             </div>
             <div class="item item-body">
                 <div ng-hide="loaded">
-                    <label>Please select a Media file to play</label>
+                    <label>請選擇音頻</label>
                 </div>
                 <div ng-show="loaded" style="height: 30px; width: {{position}}%; transition: width 0.2s; background: #e42012;">
                 </div>
             </div>
             <div class="item tabs tabs-secondary tabs-icon-left">
                 <a class="tab-item" href="javascript:" ng-click="resumeAudio()" ng-hide="isPlaying || !loaded">
-                    <i class="icon ion-ios-play"></i> Play
+                    <i class="icon ion-ios-play"></i> 播放
                 </a>
                 <a class="tab-item" href="javascript:" ng-click="pauseAudio()" ng-show="isPlaying">
-                    <i class="icon ion-pause"></i> Pause
+                    <i class="icon ion-pause"></i> 暫停
                 </a>
                 <a class="tab-item" href="javascript:" ng-click="stopAudio()" ng-show="isPlaying">
-                    <i class="icon ion-stop"></i> Stop
+                    <i class="icon ion-stop"></i> 結束
                 </a>
             </div>
         </div>
