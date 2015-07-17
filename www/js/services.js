@@ -149,6 +149,7 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup, $ionicPlatfo
 
 	obj.openPDF = function(location, successCallback, errorCallback)
 	{
+		$ionicPlatform.ready(function() {
 		console.log('Opening PDF: location = ' + location);
 		$cordovaFileOpener2.open(
 		    location,
@@ -163,6 +164,7 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup, $ionicPlatfo
 		      if(errorCallback != null)
 		      errorCallback();
 		  });
+		});
 	};
 	
 	return obj;

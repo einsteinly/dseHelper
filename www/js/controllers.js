@@ -252,7 +252,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
   $scope.comment={};
   $scope.comment.rating=[];
   $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
-  
+
   $scope.rate = function(index)
   {
     $scope.hideActionSheet = $ionicActionSheet.show({
@@ -416,7 +416,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
             console.log(JSON.stringify(file));
             if (file.name.indexOf('.pdf')>0)
             {
-              $file.openPDF(downloads_dir + file.name);
+              //$file.openPDF(downloads_dir + file.name,function(){},function(){});
+              $file.openPDF(file.nativeURL.replace('file://',''));
             }
             /*
             else if (file.name.indexOf('.mp4') > 0) {
@@ -438,7 +439,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
                   if (!$scope.$$phase) $scope.$apply();
                 });
                 
-                $scope.transcript_path = downloads_dir + "Transcripts/" + file.name.replace('.mp3','.pdf');
+                //$scope.transcript_path = downloads_dir + "Transcripts/" + file.name.replace('.mp3','.pdf');
+                $scope.transcript_path = file.nativeURL.replace('file://','').replace('Downloads','Downloads/Transcripts').replace('.mp3','.pdf');
                 console.log($scope.transcript_path);
                 $scope.loaded = true;
                 $scope.isPlaying = true;
