@@ -100,33 +100,37 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 .controller('browseYearController', function($scope,$http,$core,$stateParams,$ionicLoading){
   $scope.year = $stateParams.year;
 
-  $ionicLoading.show({
-      template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-    });
-    
-  $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
-    console.log(data);
-
-    if(data[$stateParams.year] != null)
-    $scope.questions = data[$stateParams.year];
-    else $scope.questions=[];
-    
-    angular.forEach($scope.questions,function(value,key){
-      console.log('entered iteration loop', key,value);
-      value.rating_assoc = angular.fromJson(value.rating);
-      value.comment_assoc = angular.fromJson(value.comment);
-      if(value.rating_assoc != null)
-      value.rating_count = value.rating_assoc.length;
-      else value.rating_count = 0;
-
-      if(value.comment_assoc != null)
-      value.comment_count = value.comment_assoc.length;
-      else value.comment_count = 0;
+  $scope.refresh = function()
+  {
+    $ionicLoading.show({
+        template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
       });
+      
+    $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
+      console.log(data);
 
-    $ionicLoading.hide();
-  });
+      if(data[$stateParams.year] != null)
+      $scope.questions = data[$stateParams.year];
+      else $scope.questions=[];
+      
+      angular.forEach($scope.questions,function(value,key){
+        console.log('entered iteration loop', key,value);
+        value.rating_assoc = angular.fromJson(value.rating);
+        value.comment_assoc = angular.fromJson(value.comment);
+        if(value.rating_assoc != null)
+        value.rating_count = value.rating_assoc.length;
+        else value.rating_count = 0;
 
+        if(value.comment_assoc != null)
+        value.comment_count = value.comment_assoc.length;
+        else value.comment_count = 0;
+        });
+
+      $ionicLoading.hide();
+    });
+  }
+  $scope.refresh();
+  
 })
 
 
@@ -243,11 +247,12 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
         if(response) $scope.$parent.login();
       });
     }
-
   };
+
   $scope.comment={};
   $scope.comment.rating=[];
   $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
+  
   $scope.rate = function(index)
   {
     $scope.hideActionSheet = $ionicActionSheet.show({
@@ -289,6 +294,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
           });
           $scope.closeComment();
           $scope.refresh();
+          $scope.$parent.refresh();
         });
       }
     });
@@ -401,10 +407,10 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
           //Using relative path instead
           //ONLY RELATIVE PATHS WORK IN IOS!!!
-          //var downloads_dir = "../Documents/Downloads/";
+          var downloads_dir = "../Documents/Downloads/";
 
           //THE FOLLOWING IS FOR ANDROID
-          var downloads_dir = file.nativeURL.replace(file.name,'');
+          //var downloads_dir = file.nativeURL.replace(file.name,'');
           
           if (hasExtension(file.name)) {
             console.log(JSON.stringify(file));

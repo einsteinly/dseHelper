@@ -1,4 +1,7 @@
-<ion-view view-title="Browsing questions from {{year}} ">
+<ion-view view-title="{{year}} ">
+	<ion-nav-buttons side='right'>
+		<button class='button button-clear button-positive' ng-click='refresh()'><i class='fa fa-refresh'></i> 刷新</button>
+	</ion-nav-buttons>
   <ion-content>
     <ul class='list'>
 

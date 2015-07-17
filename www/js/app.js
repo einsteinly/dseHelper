@@ -52,7 +52,6 @@ angular.module('starter', ['ionic', 'controllers'])
 
   .state('app.browse', {
     url: "/browse",
-    cache:false,
     views: {
       'menuContent': {
         templateUrl: "templates/browse.html",
@@ -63,7 +62,6 @@ angular.module('starter', ['ionic', 'controllers'])
 
   .state('app.browseYear', {
     url: "/browse/:year",
-    cache:false,
     views: {
       'menuContent': {
         templateUrl: "templates/browse.year.html",
