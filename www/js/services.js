@@ -4,9 +4,9 @@
 * Description
 * All necessary functions and local storage needed for account information
 */
-angular.module('services', ['dependencies','ngCordova']).
+angular.module('services', ['dependencies','ngCordova','ionic']).
 
-factory('$account', function($localStorage,$http,$core,$ionicPopup){
+factory('$account', function($localStorage,$http,$core,$ionicPopup, $ionicPlatform){
 
 	var obj={};
 
@@ -28,18 +28,28 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup){
 	}
 
 	obj.login = function(successCallback,errorCallback){
-		if($localStorage.getObject('credentials')!==null)
+	$ionicPlatform.ready(function() 
+	{
+		$core.checkNetwork(function()
 		{
-			var cred = $localStorage.getObject('credentials');
-			$http.post($core.APILocation,{JSON:1,action:'login',user:cred.user,password:cred.password},{timeout: 5000}).error(function(){
-				$ionicPopup.alert({
-					title: 'Connection Error' ,
-					template: 'An error has occurred when we are trying to connect to our servers. You can only use the off line features of this app.'
-				});
-				errorCallback();
-			}).success(function(){successCallback();});
-		}
-	}
+			if($localStorage.getObject('credentials')!==null)
+			{
+				var cred = $localStorage.getObject('credentials');
+				console.log(JSON.stringify(cred));
+				$http.post($core.APILocation,{JSON:1,action:'login',user:cred.user,password:cred.password}).success(function(data){
+					successCallback();
+					if(data !=1){
+					$ionicPopup.alert({
+						title: '連接錯誤' ,
+						template: '连接错误。您只能使用这个应用程序的离线功能。'
+					});
+					errorCallback();
+					}
+				})
+			}
+		});
+	});
+	};
 
 	obj.user_profile = $localStorage.getObject('user_profile');
 
@@ -51,7 +61,7 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup){
 	return obj;
 })
 
-.factory('$file',function( $timeout, $cordovaFileTransfer, $ionicLoading,$ionicPopup, $window, $ionicPlatform) {
+.factory('$file',function( $timeout, $cordovaFileTransfer, $ionicLoading,$ionicPopup, $window, $ionicPlatform, $cordovaFileOpener2) {
 
 	var obj = {};
 
@@ -62,21 +72,26 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup){
 		        "Downloads",
 		        {
 		            create: true
-		        })
+		        });
+		    fileSystem.root.getDirectory(
+		        "Downloads/Transcripts",
+		        {
+		            create: true
+		        });
 			});
 		});//Platform.ready
     };
 
-	obj.download = function(url,filename,$scope)
+	obj.download = function(url,filename,targetDirectory,$scope,template,successCallback)
 	{
 		filename = filename.replace(/ /g,'_');
 		$ionicLoading.show({
-		template: '<i class="fa fa-spinner fa-pulse"></i> Downloading...<br> <p ng-if= "fileProgress != false"> {{fileProgress}} % Completed </p> <button class="button button-block button-light" ng-click="hide()">Hide</button> ',
+		template: template,
 		scope:$scope
 		});
 		window.requestFileSystem($window.LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
 		    fileSystem.root.getDirectory(
-		        "Downloads",
+		        targetDirectory,
 		        {
 		            create: true
 		        },
@@ -98,18 +113,19 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup){
 		                        	console.log('Downloaded file. Entry URL: '+entry.toURL());
 		                            $ionicLoading.hide();
 		                            $scope[filename] = entry.toURL();
+		                            successCallback();
 		                        },
 		                        function(error) {
 		                            $ionicLoading.hide();
 		                            $ionicPopup.alert({
-		                            	title: 'Error',
-		                            	template: "Download Error Source -> " + error.source
+		                            	title: '錯誤',
+		                            	template: "程序在执行下载时出错 -> " + error.source
 		                            });
 		                        },
 		                        false
 		                    );
 		                    fileTransfer.onprogress = function(progressEvent) {
-		                    	console.log('fileTransfer progress: '+ angular.toJson(progressEvent) );
+		                    	//console.log('fileTransfer progress: '+ angular.toJson(progressEvent) );
 							    if (progressEvent.lengthComputable) {
 							      $scope.fileProgress = Math.floor( 100 * (progressEvent.loaded / progressEvent.total) );
 							      if (!$scope.$$phase) $scope.$apply();
@@ -129,8 +145,26 @@ factory('$account', function($localStorage,$http,$core,$ionicPopup){
 		    $ionicLoading.hide();
 		    console.log("Request for filesystem failed");
 		});
-	}
+	};
 
+	obj.openPDF = function(location, successCallback, errorCallback)
+	{
+		console.log('Opening PDF: location = ' + location);
+		$cordovaFileOpener2.open(
+		    location,
+		    'application/pdf'
+		  ).then(function() {
+		      // file opened successfully
+		      if(successCallback != null)
+		      successCallback();
+		  }, function(err) {
+		      // An error occurred. Show a message to the user
+		      console.log(JSON.stringify(err));
+		      if(errorCallback != null)
+		      errorCallback();
+		  });
+	};
+	
 	return obj;
 })
 

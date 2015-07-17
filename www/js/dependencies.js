@@ -1,10 +1,32 @@
 
 
 angular.module('dependencies',['ionic','ngCordova'])
-.factory('$core', function () {
+.factory('$core', function ($ionicPlatform,$ionicPopup) {
     var obj={};
     obj.APILocation = 'http://exam.lixiapps.com/api/api';
     //obj.APILocation = 'debug.php';
+
+    obj.checkNetwork = function(success_callback){
+        $ionicPlatform.ready(function() 
+        {
+            console.log(JSON.stringify(window.Connection),JSON.stringify(navigator.connection));
+            if(window.Connection) 
+            {
+                if(navigator.connection.type !== Connection.NONE) 
+                {
+                    success_callback();
+                }
+                else
+                {
+                    $ionicPopup.alert({
+                        title: "網絡連接",
+                        content: "這個功能需要網絡連接。請連接網絡後重試。"
+                    })
+                }
+            }
+        });
+    };
+
     return obj;
 })
 

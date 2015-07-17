@@ -11,13 +11,14 @@
 				<div class='item item-divider'>
 				評論 {{$index+1}}: {{question.speaker_assoc[$index]}}
 				</div>
-			  <label class="item item-input item-stacked-label">
-			    <span class="input-label">評分 (1-10)</span>
-			    <input type="number" placeholder="Rating" ng-model='comment.rating[$index]'>
+			  <label class="item item-input item-stacked-label" ng-click='rate($index)'>
+			    <button class="button button-clear button-positive" >評分</button>
+			    <br>
+			    <b ng-bind='rating_displayed[comment.rating[$index]-1]'></b>
 			  </label>
 			  <label class="item item-input item-stacked-label">
 			    <span class="input-label">評語</span>
-			    <textarea type="text" placeholder="Comment" ng-model='comment.comment[$index]' rows='5'></textarea>
+			    <textarea type="text" placeholder="評語" ng-model='comment.comment[$index]' rows='5'></textarea>
 			  </label>
 		  </div>
 

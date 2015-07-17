@@ -77,6 +77,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 })
 
 .controller('browseController', function($scope,$http,$core,$ionicLoading){
+  $core.checkNetwork(function(){
   $ionicLoading.show({
       template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
     });
@@ -93,6 +94,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
       $ionicLoading.hide();
     });
+  });
 })
 
 .controller('browseYearController', function($scope,$http,$core,$stateParams,$ionicLoading){
@@ -128,115 +130,147 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 })
 
 
-.controller('browseQuestionsController', function($scope,$stateParams,$http,$core,$ionicLoading,$sce,$state, $ionicPopup, $file, $account, $ionicModal){
+.controller('browseQuestionsController', function($scope,$stateParams,$http,$core,$ionicLoading,$sce,$state, $ionicPopup, $file, $account, $ionicModal, $ionicActionSheet){
 
   $scope.trustSrc = function(src) {
     return $sce.trustAsResourceUrl(src);
   };
 
-  $scope.max = 8;
-  $scope.rate = [];
+  $scope.refresh = function(){
+    $scope.max = 8;
+    $scope.rate = [];
 
-  $scope.year = $stateParams.year;
-  $scope.questionID = $stateParams.questionID
+    $scope.year = $stateParams.year;
+    $scope.questionID = $stateParams.questionID
 
-  $ionicLoading.show({
-      template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-    });
-    
-  $http.get($core.APILocation ,{params:{ public:true, action:'get_question_by_id', id:$stateParams.questionID}}).success(function(data){
-    console.log(data);
-
-    if(data != null)
-    $scope.question = data;
-    else $scope.question=[];
-    $scope.question.rating_assoc = angular.fromJson($scope.question.rating);
-    $scope.question.comment_assoc = angular.fromJson($scope.question.comment);
-    $scope.question.speaker_assoc = angular.fromJson($scope.question.speaker);
-    $scope.question.profile_assoc = angular.fromJson($scope.question.speaker_profile);
-
-
-    angular.forEach($scope.question.comment_assoc,function(value,key1){
-      angular.forEach(value.comment,function(comment,key2){
-        $scope.question.comment_assoc[key1].comment[key2]=$scope.question.comment_assoc[key1].comment[key2].replace(/\\n/g,"\n");
+    $ionicLoading.show({
+        template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
       });
+      
+    $http.get($core.APILocation ,{params:{ public:true, action:'get_question_by_id', id:$stateParams.questionID}}).success(function(data){
+      console.log(data);
+
+      if(data != null)
+      $scope.question = data;
+      else $scope.question=[];
+      $scope.question.rating_assoc = angular.fromJson($scope.question.rating);
+      $scope.question.comment_assoc = angular.fromJson($scope.question.comment);
+      $scope.question.speaker_assoc = angular.fromJson($scope.question.speaker);
+      $scope.question.profile_assoc = angular.fromJson($scope.question.speaker_profile);
+
+
+      angular.forEach($scope.question.comment_assoc,function(value,key1){
+        angular.forEach(value.comment,function(comment,key2){
+          $scope.question.comment_assoc[key1].comment[key2]=$scope.question.comment_assoc[key1].comment[key2].replace(/\\n/g,"\n");
+        });
+      });
+
+      angular.forEach($scope.question.profile_assoc,function(value){
+        value=value.replace(/\n/g,"\n");
+      });
+
+      var speaker_rating_average = [0,0,0,0]; var count=0;
+      angular.forEach($scope.question.rating_assoc,function(rating,key){
+
+        speaker_rating_average[0] += rating.rating[0];
+        speaker_rating_average[1] += rating.rating[1];
+        speaker_rating_average[2] += rating.rating[2];
+        speaker_rating_average[3] += rating.rating[3];
+        count++;
+      });
+
+      if(count!=0){
+      speaker_rating_average[0] /= count;$scope.rate[0] = speaker_rating_average[0];
+      speaker_rating_average[1] /= count;$scope.rate[1] = speaker_rating_average[1];
+      speaker_rating_average[2] /= count;$scope.rate[2] = speaker_rating_average[2];
+      speaker_rating_average[3] /= count;$scope.rate[3] = speaker_rating_average[3];
+      }
+
+      if(!$scope.$$phase) $scope.$apply();
+      $ionicLoading.hide();
+      console.log('speaker_rating_average:\n',speaker_rating_average);
     });
-
-    angular.forEach($scope.question.profile_assoc,function(value){
-      value=value.replace(/\n/g,"\n");
-    });
-
-    var speaker_rating_average = [0,0,0,0]; var count=0;
-    angular.forEach($scope.question.rating_assoc,function(rating,key){
-
-      speaker_rating_average[0] += rating.rating[0];
-      speaker_rating_average[1] += rating.rating[1];
-      speaker_rating_average[2] += rating.rating[2];
-      speaker_rating_average[3] += rating.rating[3];
-      count++;
-    });
-
-    if(count!=0){
-    speaker_rating_average[0] /= count;$scope.rate[0] = speaker_rating_average[0];
-    speaker_rating_average[1] /= count;$scope.rate[1] = speaker_rating_average[1];
-    speaker_rating_average[2] /= count;$scope.rate[2] = speaker_rating_average[2];
-    speaker_rating_average[3] /= count;$scope.rate[3] = speaker_rating_average[3];
-    }
-
-    if(!$scope.$$phase) $scope.$apply();
-    $ionicLoading.hide();
-    console.log('speaker_rating_average:\n',speaker_rating_average);
-  })
-
+  }
+  
+  $scope.refresh();
 
   $scope.download = function(){
     $ionicPopup.confirm({
       title: "下載",
-      template: "確認下載 MP3 文件?"
+      template: "確認下載 MP3 和 PDF 文件?"
     }).then(function(response){
-      var mp3_url = "http://exam.lixiapps.com/api/mp3/"+$scope.question.mp3_url;
+      var mp3_url = "http://exam.lixiapps.com/api/mp3/"+$scope.question.mp3_name;
+      var pdf_url = "http://exam.lixiapps.com/api/pdf/"+$scope.question.pdf_name;
+      var html_url = "http://exam.lixiapps.com/api/html/"+$scope.question.html_name;
       if(response) 
       {
         var filename = $scope.year+'_'+$scope.question.question + ".mp3";
-        $file.download(mp3_url,filename,$scope);
+        var message = '<i class="fa fa-spinner fa-pulse"></i> 下載 MP3 文件中...<br> <p ng-if= "fileProgress != false"> {{fileProgress}} % 已下載 </p> <button class="button button-block button-light" ng-click="hide()">隱藏</button> ';
+        $file.download(mp3_url,filename,"Downloads",$scope,message,function(){
+          //Callback from the previous download
+          var filename = $scope.year+'_'+$scope.question.question + ".pdf";
+          var message = '<i class="fa fa-spinner fa-pulse"></i> 下載 PDF 文件中...<br> <p ng-if= "fileProgress != false"> {{fileProgress}} % 已下載 </p> <button class="button button-block button-light" ng-click="hide()">隱藏</button> ';
+          $file.download(pdf_url,filename,"Downloads/Transcripts",$scope,message,function(){
+            $ionicPopup.alert({
+                                title: "下載成功",
+                                template: "PDF 和 MP3 文件已成功下载。"
+                              });
+            
+          });
+        });
       }
-      else {}
     });
   };
 
 
-  $ionicModal.fromTemplateUrl("/templates/add_comment.html", {scope:$scope,animation:'slide-in-up'}).then(function(modal){
+  $ionicModal.fromTemplateUrl("templates/add_comment.html", {scope:$scope,animation:'slide-in-up'}).then(function(modal){
     $scope.modalComment = modal;
   });
 
-  $scope.closeComment = function(){$scope.modalComment.hide();};
+  $scope.closeComment = function() {$scope.modalComment.hide();};
 
-  $scope.comment = function() {
+  $scope.commentShow = function() {
 
-    if($account.user!=null)
+    if($account.user != null)
     {
-      $ionicLoading.show({
-        template: "<i class='fa fa-spinner fa-pulse'></i> 正在登陸"
-      });
-
-      $account.login(function(){//success callback
-        $scope.modalComment.show();
-        $ionicLoading.hide();
-      },function(){ //error callback
-        $ionicLoading.hide();
-      });
+      $scope.modalComment.show();
     }
-
     else {
       $ionicPopup.confirm({
         title: "請登入",
-        template: "只有以註冊老師才可以評論. 如果你已經註冊, 請按 'YES' 鍵前往登錄介面. "
+        template: "只有已註冊老師才可以評論. 如果你已經註冊, 請按 'OK' 鍵前往登錄介面. "
       }).then(function(response){
         if(response) $scope.$parent.login();
       });
     }
 
   };
+  $scope.comment={};
+  $scope.comment.rating=[];
+  $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
+  $scope.rate = function(index)
+  {
+    $scope.hideActionSheet = $ionicActionSheet.show({
+      buttons: [
+      {text: "U"},
+      {text: "1"},
+      {text: "2"},
+      {text: "3"},
+      {text: "4"},
+      {text: "5"},
+      {text: "5*"},
+      {text: "5**"}
+      ],
+      titleText: "評分",
+      cancelText: "取消",
+      cancel: function(){},
+      buttonClicked: function(clickedIndex){
+        console.log('index ',index,'clickedIndex',clickedIndex);
+        $scope.comment.rating[index] = clickedIndex+1;
+        return true;
+      }
+    });
+  }
 
   $scope.submitComment = function(){
     $ionicPopup.confirm({
@@ -245,11 +279,16 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
     }).then(function(response){
       if(response)
       {
-        $http.post($core.APILocation,{JSON:1, action:'insert_comment',id:$stateParams.questionID, comment1:$scope.comment.comment[0],comment2:$scope.comment.comment[1],comment3:$scope.comment.comment[2],comment4:$scope.comment.comment[3],rating1:$scope.comment.rating[0],rating2:$scope.comment.rating[1],rating3:$scope.comment.rating[2],rating4:$scope.comment.rating[3]}).success(function(){
+        var username = $account.user;
+        console.log("http get info: " + username, JSON.stringify($scope.comment));
+        $http.get($core.APILocation,{params:{public:true, action:'insert_comment',id:$stateParams.questionID, comment1:$scope.comment.comment[0],comment2:$scope.comment.comment[1],comment3:$scope.comment.comment[2],comment4:$scope.comment.comment[3],rating1:$scope.comment.rating[0],rating2:$scope.comment.rating[1],rating3:$scope.comment.rating[2],rating4:$scope.comment.rating[3], user: username }}).success(function(data){
+          console.log(data);
           $ionicPopup.alert({
             title: '成功',
             template: "你的評論已被成功上載."
           });
+          $scope.closeComment();
+          $scope.refresh();
         });
       }
     });
@@ -271,7 +310,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
     }
     
     function hasExtension(fileName) {
-        var exts = ['.mp3', '.m4a', '.ogg', '.mp4', '.aac'];
+        var exts = ['.mp3', '.m4a', '.ogg', '.mp4', '.aac','pdf'];
         return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
       }
  
@@ -308,12 +347,16 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
     $rootScope.player = function() {
       $scope.modal.show();
     };
+
+    $scope.open_transcript = function(transcript_path){
+      $file.openPDF(transcript_path,function(){},function(){});
+    };
     
     $scope.player = $rootScope.player;
     $scope.hidePlayer = $rootScope.hidePlayer;
     function getFileSystem(callback)
     {
-      $rootScope.show('正在連結服務器,請稍後...');
+      $rootScope.show('正在打開文件夾,請稍後...');
       $window.requestFileSystem($window.LocalFileSystem.PERSISTENT, 0, function(fs) {
           //console.log("fs", JSON.stringify(fs));
           
@@ -355,29 +398,42 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
             processFile(file.nativeURL);
           }
         } else {
+
+          //Using relative path instead
+          //ONLY RELATIVE PATHS WORK IN IOS!!!
+          //var downloads_dir = "../Documents/Downloads/";
+
+          //THE FOLLOWING IS FOR ANDROID
+          var downloads_dir = file.nativeURL.replace(file.name,'');
+          
           if (hasExtension(file.name)) {
-            if (file.name.indexOf('.mp4') > 0) {
+            console.log(JSON.stringify(file));
+            if (file.name.indexOf('.pdf')>0)
+            {
+              $file.openPDF(downloads_dir + file.name);
+            }
+            /*
+            else if (file.name.indexOf('.mp4') > 0) {
               // Stop the audio player before starting the video
               $scope.stopAudio();
               VideoPlayer.play(file.nativeURL);
-            } else {
+            }*/
+            else {
               fsResolver(file.nativeURL, function(fs) {
-                //console.log('fs ', fs);
+                console.log('fs ',JSON.stringify(fs),'audio file',JSON.stringify(file));
                 // Play the selected file
-                //THE FOLLOWING IS FOR ANDROID
-                AudioSvc.playAudio(file.nativeURL, function(a, b) {
 
-                //Using relative path instead
-                //ONLY RELATIVE PATHS WORK IN IOS!!!
-                //AudioSvc.playAudio("../Documents/Downloads/"+file.name, function(a, b) {
-                  console.log(a, b, angular.toJson(file));
+                AudioSvc.playAudio(downloads_dir+file.name, function(a, b) {
+                  //console.log(a, b, angular.toJson(file));
                   $scope.position = Math.ceil(a / b * 100);
                   if (a < 0) {
                     $scope.stopAudio();
                   }
                   if (!$scope.$$phase) $scope.$apply();
                 });
- 
+                
+                $scope.transcript_path = downloads_dir + "Transcripts/" + file.name.replace('.mp3','.pdf');
+                console.log($scope.transcript_path);
                 $scope.loaded = true;
                 $scope.isPlaying = true;
                 $scope.name = file.name;
@@ -406,7 +462,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
               });
             }
           } else {
-            $rootScope.toggle('對不起,我們無法播放此文件 :/', 3000);
+            $rootScope.toggle('對不起,我們無法打开此文件 :/', 2000);
           }
  
         }
@@ -427,6 +483,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
                 var arr = [];
                 // push the path to go one level up
                 if (fs.fullPath !== '/Downloads/') {
+                //DEBUG MODE TO SHOW ALL FILES
+                //if (fs.fullPath !== '/') {
                   arr.push({
                     id: 0,
                     name: '.. 返回',
