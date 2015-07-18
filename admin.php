@@ -46,77 +46,81 @@ if($_SESSION['auth']!='admin') die('FATAL ERROR. THIS PAGE IS ONLY FOR ADMINISTR
                     <div class='row'>
                     <div class='col-sm-3'>
                         <label> Question Year </label>
-                        <input class='form-control' type='text' id='year'>
+                        <input class='form-control' type='text' name='year'>
                     </div>
                     <div class='col-sm-3'>
                         <label> Question</label>
-                        <input class='form-control' type='text' id='question'>
+                        <input class='form-control' type='text' name='question'>
                     </div>
                     <div class='col-sm-3'>
                         <label> Youtube width </label>
-                        <input class='form-control' type='number' id='width'>
+                        <input class='form-control' type='number' name='width'>
                     </div>
                     <div class='col-sm-3'>
                         <label> Youtube height </label>
-                        <input class='form-control' type='number' id='height'>
+                        <input class='form-control' type='number' name='height'>
                     </div>
                     </div>
 
                     <div class='row'>
                     <div class='col-sm-12'>
                         <label> Youtube link </label>
-                        <input class='form-control' type='text' id='link'>
+                        <input class='form-control' type='text' name='link'>
                     </div>
                     </div>
 
                     <div class='row'>
                     <div class='col-sm-3'>
                         <label> Speaker 1 </label>
-                        <input class='form-control' type='text' id='speaker1'>
+                        <input class='form-control' type='text' name='speaker1'>
                     </div>
                     <div class='col-sm-3'>
                         <label> Speaker 2 </label>
-                        <input class='form-control' type='text' id='speaker2'>
+                        <input class='form-control' type='text' name='speaker2'>
                     </div>
                     <div class='col-sm-3'>
                         <label> Speaker 3 </label>
-                        <input class='form-control' type='text' id='speaker3'>
+                        <input class='form-control' type='text' name='speaker3'>
                     </div>
                     <div class='col-sm-3'>
                         <label> Speaker 4 </label>
-                        <input class='form-control' type='text' id='speaker4'>
+                        <input class='form-control' type='text' name='speaker4'>
                     </div>
                     </div>
 
                     <div class='row'>
                     <div class='col-sm-3'>
                         <label> Profile 1 </label>
-                        <textarea class='form-control' type='text' id='profile1' rows='5'></textarea>
+                        <textarea class='form-control' type='text' name='profile1' rows='5'></textarea>
                     </div>
                     <div class='col-sm-3'>
                         <label> Profile 2 </label>
-                        <textarea class='form-control' type='text' id='profile2' rows='5'></textarea>
+                        <textarea class='form-control' type='text' name='profile2' rows='5'></textarea>
                     </div>
                     <div class='col-sm-3'>
                         <label> Profile 3 </label>
-                        <textarea class='form-control' type='text' id='profile3' rows='5'></textarea>
+                        <textarea class='form-control' type='text' name='profile3' rows='5'></textarea>
                     </div>
                     <div class='col-sm-3'>
                         <label> Profile 4 </label>
-                        <textarea class='form-control' type='text' id='profile4' rows='5'></textarea>
+                        <textarea class='form-control' type='text' name='profile4' rows='5'></textarea>
                     </div>
                     </div>
 
                     <div class='row'>
-                    <div class='col-sm-12'>
+                    <div class='col-sm-6'>
                         <label> Upload MP3 file (For mobile downloads)</label>
                         <input type='file' accept="audio/mp3" name='mp3'>
+                    </div>
+                    <div class='col-sm-6'>
+                        <label> Upload transcript PDF file (For mobile downloads)</label>
+                        <input type='file' accept="application/pdf" name='pdf'>
                     </div>
                     </div>
 
                     <br><br>
                     <center>
-                        <input type='submit' class='form-control'>
+                        <input type='submit' class='btn btn-lg btn-success'>
                     </center>
 
                 </form>
