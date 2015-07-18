@@ -96,10 +96,10 @@ As such, a user name ***must*** be provided via a GET variable 'user'
 ##Databse management
 
 ###Credentials
-- $servername = "mysql.hostinger.co.uk";
-- $username = "u185339700_exam";
+- $servername = mysql.hostinger.co.uk
+- $username = u185339700_exam
 - $password = ***OBSCURED***
-- $db = "u185339700_exam";
+- $db = u185339700_exam
 
 ###List of Databases
 - user_list
