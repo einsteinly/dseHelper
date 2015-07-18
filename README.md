@@ -80,13 +80,26 @@ This call returns all the questions in the database.
 		question,speaker,speaker_profile,youtube_link,youtube_width,youtube_height,comment,rating,mp3_url
 	}
 
+###action: 'insert_comment'
+
+*NOTE*
+This is used only for the mobile to prevent any errors that may hang the app.
+As such, a user name ***must*** be provided via a GET variable 'user'
+
+**Parameters**
+    
+    comment1,comment2,comment3,comment4,rating1,rating2,rating3,rating4, id (Question ID, see topic_database for information on ID), user
+
 
 
 
 ##Databse management
 
 ###Credentials
-- HIDDEN
+- $servername = "mysql.hostinger.co.uk";
+- $username = "u185339700_exam";
+- $password = "_MYsql";
+- $db = "u185339700_exam";
 
 ###List of Databases
 - user_list
@@ -107,7 +120,9 @@ This call returns all the questions in the database.
 |answer_date|*text*|The date on which this answer is posted|
 |comment|longtext|This **MUST BE A JSON STRING ARRAY** that contains the following: <br> - username of the user posted the comment <br> - the actual comment <br> Convention: <br>array(array('user' => text , 'comment' => [comment1,comment2,comment3,comment4]))|
 |rating|longtext|This **MUST BE A JSON STRING ARRAY** as well. This may contain the following: <br>- username of the user giving the rating<br>- the rating given<br> Convention: <br>array(array('user' => text , 'rating' => [rating1,rating2,rating3,rating4]))|
-|mp3_url	| text 	| This is a part of te URL to the MP3 recording of the particular file. This needs to be collision free. Hence, each file name is appended with a random number. This is the **filename** only, and not the actual URL. All MP3 files are located at /api/mp3/|
+|mp3_name	| text 	| This is a part of te URL to the MP3 recording of the particular file. This needs to be collision free. Hence, each file name is appended with a random number. This is the **filename** only, and not the actual URL. All MP3 files are located at /api/mp3/|
+|pdf_name    |text   | This is the **filename** of the transcript. All pdf files are located at /api/pdf/|
+|html_name   |text   | This is the **filename** of the transcipt HTML page which will be embedded in the player |
 
 
 ####user_list
