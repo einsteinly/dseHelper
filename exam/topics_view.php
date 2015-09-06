@@ -308,7 +308,7 @@ if($_POST['debug']==1) var_dump($topic_row,$comment_array,$rating_array,$speaker
 </div>
 
 <div class='modal-footer' style='text-align:center;margin-top:5%'>
-    <p style='text-align:center;'>  ©2015 Li Xi and Peter Yuen</p>
+    <p style='text-align:center;'>  ©2015 dseHelper</p>
 </div>
 
 </body>

@@ -82,7 +82,7 @@ include('/home/u185339700/public_html/exam/api/api.php');
 </div>
 
 <div class='modal-footer'style='text-align:center'>
-    <p>  ©2015 Li Xi and Peter Yuen</p>
+    <p>  ©2015 dseHelper</p>
 </div>
 
 </body>

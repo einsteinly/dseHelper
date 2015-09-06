@@ -90,6 +90,11 @@ As such, a user name ***must*** be provided via a GET variable 'user'
     
     comment1,comment2,comment3,comment4,rating1,rating2,rating3,rating4, id (Question ID, see topic_database for information on ID), user
 
+###action: 'SQL_CMD'
+
+**Parameters**
+
+    sql => SQL Query
 
 
 
@@ -111,18 +116,23 @@ As such, a user name ***must*** be provided via a GET variable 'user'
 | Name of column  |   Datatype    |   Intended usage  |
 |   :------: |  :-----:     |   :------:    |
 | question_year| text | The year in which the question is asked. This is used to sort the questions according to the years|
-|question|longtext|The actual question|
+|question|longtext|The question number|
+|question_full|longtext| The **actual question**|
 |speaker|longtext|JSON String of the names of the **FOUR** speakers: [speaker1,speaker2,speaker3,speaker4]|
 |speaker_profile|longtext|JSON String of the profiles of the **FOUR** speakers: [profile1,profile2,profile3,profile4]|
 |youtube_link|text|The embed link used in the **display.php** page|
-|youtube_width|int|To preserve aspect ratio|
-|youtube_height|int|To preserve aspect ratio|
+|youtube_width **OBSOLETE** |int|To preserve aspect ratio|
+|youtube_height **OBSOLETE** |int|To preserve aspect ratio|
 |answer_date|*text*|The date on which this answer is posted|
 |comment|longtext|This **MUST BE A JSON STRING ARRAY** that contains the following: <br> - username of the user posted the comment <br> - the actual comment <br> Convention: <br>array(array('user' => text , 'comment' => [comment1,comment2,comment3,comment4]))|
 |rating|longtext|This **MUST BE A JSON STRING ARRAY** as well. This may contain the following: <br>- username of the user giving the rating<br>- the rating given<br> Convention: <br>array(array('user' => text , 'rating' => [rating1,rating2,rating3,rating4]))|
 |mp3_name	| text 	| This is a part of te URL to the MP3 recording of the particular file. This needs to be collision free. Hence, each file name is appended with a random number. This is the **filename** only, and not the actual URL. All MP3 files are located at /api/mp3/|
 |pdf_name    |text   | This is the **filename** of the transcript. All pdf files are located at /api/pdf/|
-|html_name   |text   | This is the **filename** of the transcipt HTML page which will be embedded in the player |
+|html_name **OBSOLETE**  |text   | This is the **filename** of the transcipt HTML page which will be embedded in the player |
+|discussion_type|bit | This shows the type of discussion. **FALSE** MEANS INDIVIDUAL. **TRUE** MEANS GROUP|
+|transcript_html|longtext|This is the HTML string of the transcript to be displayed|
+
+
 
 
 ####user_list

@@ -37,6 +37,8 @@ if($_SESSION['auth']!='admin') die('FATAL ERROR. THIS PAGE IS ONLY FOR ADMINISTR
 <body>
 
 <div class='container-fluid'>
+    <h1>DSEHELPER ADMIN PANEL</h1>
+    <p> ©2015 dseHelper</p>
     <div class='row'>
         <div class='panel panel-default'>
             <div class='panel-heading'><h3 class='panel-title'>Add a new video</h3></div>
@@ -49,16 +51,30 @@ if($_SESSION['auth']!='admin') die('FATAL ERROR. THIS PAGE IS ONLY FOR ADMINISTR
                         <input class='form-control' type='text' name='year'>
                     </div>
                     <div class='col-sm-3'>
-                        <label> Question</label>
-                        <input class='form-control' type='text' name='question'>
+                        <label> Question number</label>
+                        <input class='form-control' type='text' name='question' placeholder='9.1'>
                     </div>
-                    <div class='col-sm-3'>
-                        <label> Youtube width </label>
-                        <input class='form-control' type='number' name='width'>
+                    <div class='col-sm-6'>
+                        <label> Question in full </label>
+                        <input class='form-control' type='text' name='question_full'>
                     </div>
-                    <div class='col-sm-3'>
-                        <label> Youtube height </label>
-                        <input class='form-control' type='number' name='height'>
+                    </div>
+
+                    <div class='row'>
+                    <div class='col-sm-6'>
+                    <label>Discussion type</label>
+                        <div class='radio'>
+                        <label>
+                            <input type='radio' name='discussion_type' value='false'> INDIVIDUAL
+                        </label>
+                        <label>
+                            <input type='radio' name='discussion_type' value='true'> GROUP
+                        </label>
+                        </div>
+                    </div>
+                    <div class='col-sm-6'>
+                        <label> Recording date</label>
+                        <input type='date' class='form-control' name='answer_date'>
                     </div>
                     </div>
 
@@ -66,25 +82,6 @@ if($_SESSION['auth']!='admin') die('FATAL ERROR. THIS PAGE IS ONLY FOR ADMINISTR
                     <div class='col-sm-12'>
                         <label> Youtube link </label>
                         <input class='form-control' type='text' name='link'>
-                    </div>
-                    </div>
-
-                    <div class='row'>
-                    <div class='col-sm-3'>
-                        <label> Speaker 1 </label>
-                        <input class='form-control' type='text' name='speaker1'>
-                    </div>
-                    <div class='col-sm-3'>
-                        <label> Speaker 2 </label>
-                        <input class='form-control' type='text' name='speaker2'>
-                    </div>
-                    <div class='col-sm-3'>
-                        <label> Speaker 3 </label>
-                        <input class='form-control' type='text' name='speaker3'>
-                    </div>
-                    <div class='col-sm-3'>
-                        <label> Speaker 4 </label>
-                        <input class='form-control' type='text' name='speaker4'>
                     </div>
                     </div>
 
@@ -118,6 +115,15 @@ if($_SESSION['auth']!='admin') die('FATAL ERROR. THIS PAGE IS ONLY FOR ADMINISTR
                     </div>
                     </div>
 
+                    <hr>
+
+                    <div class='row'>
+                    <div class='col-sm-12'>
+                    <label>Paste the HTML code here. This will be the live transcript</label>
+                    <textarea name='transcript_html' rows='10' type='text' class='form-control'></textarea>
+                    </div>
+                    </div>
+
                     <br><br>
                     <center>
                         <input type='submit' class='btn btn-lg btn-success'>
@@ -131,7 +137,7 @@ if($_SESSION['auth']!='admin') die('FATAL ERROR. THIS PAGE IS ONLY FOR ADMINISTR
 
 
 <div class='modal-footer'style='text-align:center'>
-    <p>  ©2015 Li Xi and Peter Yuen</p>
+    <p>  ©2015 dseHelper</p>
 </div>
 
 </body>

@@ -64,7 +64,13 @@
     </div>
 </nav>
 
+<div class='container' style='margin-top:100px'>
+    <div class='jumbotron'>
+        <h1>This page in under construction.</h1>
+    </div>
+</div>
 
+<!-- 
 <body>
 <div class='container-fluid'>
     <div class='row'>
@@ -144,4 +150,4 @@ $(document).ready(function() {
 
 });
 
-</script>
+</script> -->
