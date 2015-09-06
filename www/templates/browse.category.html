@@ -1,15 +1,13 @@
-<ion-view view-title="{{year}}: {{category_displayed}} ">
+<ion-view view-title="{{year}} ">
 	<ion-nav-buttons side='right'>
 		<button class='button button-clear' ng-click='refresh()'><i class='fa fa-refresh'></i> 刷新</button>
 	</ion-nav-buttons>
   <ion-content>
-  <ion-refresher pulling-text='向下滑動以刷新' on-refresh='refresh()'></ion-refresher>
     <ul class='list'>
 
-    	<a class='item' ng-repeat="question in questions" href='#/app/browse/{{year}}/{{category}}/{{question.id}}'>
+    	<a class='item' ng-repeat="question in questions" href='#/app/browse/{{year}}/{{question.id}}'>
 
-        <h2>{{question.question}}</h2>
-        <p>{{question.question_full}}</p>
+        {{question.question}}
         <span class='badge'> {{question.rating_count}} 評分 {{question.comment_count}} 評語</span>
 
         </a>

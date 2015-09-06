@@ -1,4 +1,4 @@
-<ion-view view-title="Profile">
+<ion-view view-title="{{user}}">
   <ion-content>
   	<center>
     <h1><i class="fa fa-user"></i> {{user}} </h1>
@@ -7,20 +7,24 @@
     	<p>請輸入資料 </p>
     	<label class='item item-input'>
     		<span class='input-label'>郵箱</span>
-    		<input type='text' value="{{user_profile.email}}">
+    		<input type='text' ng-init="user_input.email=user_profile.email" ng-model='user_input.email'>
     	</label>
 
     	<label class='item item-input'>
     		<span class='input-label'>新密碼</span>
-    		<input type='password' ng-model="input.password">
+    		<input type='password' ng-model="user_input.password">
     	</label>
 
     	<label class='item item-input'>
     		<span class='input-label'>確認密碼</span>
-    		<input type='password' ng-model="input.password2">
+    		<input type='password' ng-model="user_input.password2">
     	</label>
 
-    	<button class='button button-block button-royal'>
+        <button class='button button-block button-assertive' ng-if='user_input.password != user_input.password2'>
+        <h2><i class='exclamation-circle'></i> 密碼不匹配或郵箱為空</h2>
+        </button>
+
+    	<button class='button button-block button-royal' ng-if='user_input.password == user_input.password2 && user_input.email!=""' ng-click='submit()'>
     	提交
     	</button>
     </div>

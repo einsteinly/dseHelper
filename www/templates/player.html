@@ -1,44 +1,37 @@
 <ion-modal-view>
     <ion-header-bar class="bar-assertive">
-        <h1 class="title">播放器</h1>
-        <div class="buttons">
-            <button class="button button-clear" ng-click="hidePlayer()">縮小</button>
-        </div>
+        <button class="button button-clear" ng-click="hidePlayer()"><i class='fa fa-times'></i></button>
+        <h1 class="title">{{name || '--'}}</h1>
+        <button class="button button-clear" ng-click="open_transcript(transcript_path)"><span class='fa fa-external-link'></span> PDF</button>
     </ion-header-bar>
     <ion-content class="padding">
-        <div class="list card">
-            <div class="item">
-                <h2><i class="icon ion-ios-musical-notes"></i> {{name || '--'}}</h2>
-            </div>
-            <div class="item item-body">
-                <div ng-hide="loaded">
-                    <label>請選擇音頻</label>
-                </div>
-                <div ng-show="loaded" style="height: 30px; width: {{position}}%; transition: width 0.2s; background: #e42012;">
-                </div>
-            </div>
-            <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item" href="javascript:" ng-click="resumeAudio()" ng-hide="isPlaying || !loaded">
-                    <i class="icon ion-ios-play"></i> 播放
-                </a>
-                <a class="tab-item" href="javascript:" ng-click="pauseAudio()" ng-show="isPlaying">
-                    <i class="icon ion-pause"></i> 暫停
-                </a>
-                <a class="tab-item" href="javascript:" ng-click="stopAudio()" ng-show="isPlaying">
-                    <i class="icon ion-stop"></i> 結束
-                </a>
-            </div>
-        </div>
-
         <div class="list card">
             <div class="item">
                 <h2><i class="fa fa-file-pdf-o"></i> 字幕</h2>
             </div>
             <div class="item item-body">
-                <button class='button button-outline button-positive button-block' ng-click='open_transcript(transcript_path)'>
-                    <span class='fa fa-external-link'></span> 打开字幕
-                </button>
+                <div ng-bind-html="transcript_html"></div>
             </div>
         </div>
     </ion-content>
+    <div class='player_footer'>
+        <div class="item item-body">
+            <div ng-hide="loaded">
+                <label>請選擇音頻</label>
+            </div>
+            <div ng-show="loaded" style="height: 30px; width: {{position}}%; transition: width 0.2s; background: #e42012;">
+            </div>
+        </div>
+        <div class="item tabs tabs-secondary tabs-icon-left">
+            <a class="tab-item" href="javascript:" ng-click="resumeAudio()" >
+                <i class="icon ion-ios-play"></i> 播放
+            </a>
+            <a class="tab-item" href="javascript:" ng-click="pauseAudio()" >
+                <i class="icon ion-pause"></i> 暫停
+            </a>
+            <a class="tab-item" href="javascript:" ng-click="stopAudio()" >
+                <i class="icon ion-stop"></i> 結束
+            </a>
+        </div>
+    </div>
 </ion-modal-view>

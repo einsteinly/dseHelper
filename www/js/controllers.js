@@ -1,4 +1,4 @@
-angular.module('controllers', ['ionic','dependencies','services','ionic.rating','ngCordova'])
+angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
 
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicLoading,$http, $ionicPopup, $core, $account, $rootScope) {
@@ -29,28 +29,27 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
+    // console.log('Doing login', $scope.loginData);
     $ionicLoading.show({
       template: '<i class="fa fa-spinner fa-pulse"></i> 連接中...'
     });
 
     $http.post($core.APILocation,{JSON:1,action:'login',user:$scope.loginData.username,password:$scope.loginData.password})
     .success(function(data,status,headers,config){
-        console.log(data);
+        // console.log(data);
         $ionicLoading.hide();
 
         if(data!=1) $ionicPopup.alert({
             title: '無法登陸' ,
             template: '請重新輸入帳戶密碼.'
         });
-        else 
+        if(data == 1)
           {
             $account.storeCredentials({user:$scope.loginData.username,password:$scope.loginData.password});
+            $scope.user = $scope.loginData.username;
             $scope.closeLogin();
+            if (!$scope.$$phase) $scope.$apply();
           }
-
-          $scope.user = $scope.loginData.username;
-          if (!$scope.$$phase) $scope.$apply();
         });
   };
 
@@ -71,9 +70,57 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
 
 
-.controller('ProfileCtrl',function($scope,$account){
+.controller('ProfileCtrl',function($scope,$account, $ionicPopup, $ionicLoading){
   $scope.user_profile = $account.user_profile;
   $scope.user = $account.user;
+  $scope.user_input = {};
+
+  $ionicLoading.show({
+    template: "正在登錄到服務器..."
+  });
+  $account.login( function(){
+    $ionicLoading.hide();
+  }, function(){
+    $ionicPopup.alert({
+      title: '確認',
+      template: '連接錯誤。請檢查您的網絡連接。'
+    });
+  });
+  $scope.submit = function() 
+  {
+    $ionicPopup.confirm({
+      title: '確認',
+      template: '確定要提交嗎？'
+    }).then(function(response){
+      if(response)
+      {
+        if($scope.user_input.email != '' && $scope.user_input.password != '' && $scope.user_input.password == $scope.user_input.password2 ) 
+        {
+            $ionicLoading.show({
+            template: "正在連接。。。"
+            });
+            $account.update_profile($scope.user,$scope.user_input.password, $scope.user_input.email, function(data){
+            if(data) 
+              {
+                $ionicLoading.hide();
+                $ionicPopup.alert({
+                  title: '成功',
+                  template: '信息更新成功'
+                });
+              }
+            else $ionicPopup.alert({
+              title: '錯誤',
+              template: '連接錯誤。請檢查您的網絡連接。'
+            });
+          });
+        }
+        else {$ionicPopup.alert({
+          title: '錯誤',
+          template: '密碼不匹配或郵箱為空'
+        });}
+      }
+    });
+  };
 })
 
 .controller('browseController', function($scope,$http,$core,$ionicLoading){
@@ -83,15 +130,25 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
     });
     
     $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
-      console.log(data);
+      // console.log(data);
 
-      for(var i=2010;i<2015;i++)
-      {
-        if(data[String(i)] != null)
-        $scope['n'+String(i)] = data[String(i)].length;
-        else $scope['n'+String(i)]=0;
-      }
-
+      // for(var i=2010;i<2015;i++)
+      // {
+      //   if(data[String(i)] != null)
+      //   $scope['n'+String(i)] = data[String(i)].length;
+      //   else $scope['n'+String(i)]=0;
+      // }
+      $scope.groupCount = {};  //discussion_type=true
+      $scope.individualCount = {};
+      angular.forEach(data, function(questions, year){
+        $scope.groupCount[year]=0;
+        $scope.individualCount[year]=0;
+        angular.forEach(questions, function(question, key){
+          if(question.discussion_type == 1) $scope.groupCount[year]++;
+          else $scope.individualCount[year]++;
+        });
+      });
+      // console.log(JSON.stringify($scope.count));
       $ionicLoading.hide();
     });
   });
@@ -99,7 +156,13 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
 .controller('browseYearController', function($scope,$http,$core,$stateParams,$ionicLoading){
   $scope.year = $stateParams.year;
+  $scope.category = $stateParams.category;
+  var category = $scope.category;
+  var category_displayed = ['個人討論','小組討論'];
+  $scope.category_displayed = category_displayed[$scope.category];
 
+  // if(category) $scope.backgroundStyle = 'background:url( resources/img/group.jpg); background-repeat: no-repeat; background-size: 100%';
+  // else $scope.backgroundStyle = 'background:url( resources/img/individual.jpg); background-repeat: no-repeat; background-size: 100%';
   $scope.refresh = function()
   {
     $ionicLoading.show({
@@ -107,26 +170,34 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
       });
       
     $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
-      console.log(data);
+      // console.log(JSON.stringify(data));
 
       if(data[$stateParams.year] != null)
       $scope.questions = data[$stateParams.year];
       else $scope.questions=[];
       
-      angular.forEach($scope.questions,function(value,key){
-        console.log('entered iteration loop', key,value);
-        value.rating_assoc = angular.fromJson(value.rating);
-        value.comment_assoc = angular.fromJson(value.comment);
-        if(value.rating_assoc != null)
-        value.rating_count = value.rating_assoc.length;
-        else value.rating_count = 0;
+      angular.forEach($scope.questions,function(question,key){
+        // console.log('entered iteration loop', key,question);
+        if(question.discussion_type == $scope.category)
+        {
+          question.rating_assoc = angular.fromJson(question.rating);
+          question.comment_assoc = angular.fromJson(question.comment);
+          if(question.rating_assoc != null)
+          question.rating_count = question.rating_assoc.length;
+          else question.rating_count = 0;
 
-        if(value.comment_assoc != null)
-        value.comment_count = value.comment_assoc.length;
-        else value.comment_count = 0;
+          if(question.comment_assoc != null)
+          question.comment_count = question.comment_assoc.length;
+          else question.comment_count = 0;
+        }
+        else
+        {
+          $scope.questions.splice(key,1);
+        }
         });
 
       $ionicLoading.hide();
+      $scope.$broadcast('scroll.refreshComplete');
     });
   }
   $scope.refresh();
@@ -134,67 +205,39 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 })
 
 
-.controller('browseQuestionsController', function($scope,$stateParams,$http,$core,$ionicLoading,$sce,$state, $ionicPopup, $file, $account, $ionicModal, $ionicActionSheet){
+.controller('browseQuestionsController', function($scope,$stateParams,$http,$core,$ionicLoading,$sce,$state, $ionicPopup, $file, $account, $ionicModal, $ionicActionSheet, $questionContents, $localStorage){
+
+  $scope.category = $stateParams.category;
+  $scope.year = $stateParams.year;
+  $scope.questionID = $stateParams.questionID;  
+
 
   $scope.trustSrc = function(src) {
+    // console.log(src);
     return $sce.trustAsResourceUrl(src);
   };
 
   $scope.refresh = function(){
-    $scope.max = 8;
-    $scope.rate = [];
-
-    $scope.year = $stateParams.year;
-    $scope.questionID = $stateParams.questionID
-
+    // $scope.max = 8;
+    // $scope.rate = [];
+    
     $ionicLoading.show({
-        template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-      });
-      
-    $http.get($core.APILocation ,{params:{ public:true, action:'get_question_by_id', id:$stateParams.questionID}}).success(function(data){
-      console.log(data);
-
-      if(data != null)
-      $scope.question = data;
-      else $scope.question=[];
-      $scope.question.rating_assoc = angular.fromJson($scope.question.rating);
-      $scope.question.comment_assoc = angular.fromJson($scope.question.comment);
-      $scope.question.speaker_assoc = angular.fromJson($scope.question.speaker);
-      $scope.question.profile_assoc = angular.fromJson($scope.question.speaker_profile);
-
-
-      angular.forEach($scope.question.comment_assoc,function(value,key1){
-        angular.forEach(value.comment,function(comment,key2){
-          $scope.question.comment_assoc[key1].comment[key2]=$scope.question.comment_assoc[key1].comment[key2].replace(/\\n/g,"\n");
+          template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
         });
+    $questionContents.getContentByID($stateParams.questionID, function(data)
+      {
+        $scope.question = data;
+        $scope.rate = data.rate;
+        $scope.transcript_html = data.transcript_html;
+        
+        // console.log($scope.html_url);
+        if(!$scope.$$phase) $scope.$apply();
+        $ionicLoading.hide();
+        // console.log('speaker_rating_average:\n',$scope.rate);
+        $scope.$broadcast('scroll.refreshComplete');
       });
-
-      angular.forEach($scope.question.profile_assoc,function(value){
-        value=value.replace(/\n/g,"\n");
-      });
-
-      var speaker_rating_average = [0,0,0,0]; var count=0;
-      angular.forEach($scope.question.rating_assoc,function(rating,key){
-
-        speaker_rating_average[0] += rating.rating[0];
-        speaker_rating_average[1] += rating.rating[1];
-        speaker_rating_average[2] += rating.rating[2];
-        speaker_rating_average[3] += rating.rating[3];
-        count++;
-      });
-
-      if(count!=0){
-      speaker_rating_average[0] /= count;$scope.rate[0] = speaker_rating_average[0];
-      speaker_rating_average[1] /= count;$scope.rate[1] = speaker_rating_average[1];
-      speaker_rating_average[2] /= count;$scope.rate[2] = speaker_rating_average[2];
-      speaker_rating_average[3] /= count;$scope.rate[3] = speaker_rating_average[3];
-      }
-
-      if(!$scope.$$phase) $scope.$apply();
-      $ionicLoading.hide();
-      console.log('speaker_rating_average:\n',speaker_rating_average);
-    });
-  }
+    
+  };
   
   $scope.refresh();
 
@@ -215,6 +258,8 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
           var filename = $scope.year+'_'+$scope.question.question + ".pdf";
           var message = '<i class="fa fa-spinner fa-pulse"></i> 下載 PDF 文件中...<br> <p ng-if= "fileProgress != false"> {{fileProgress}} % 已下載 </p> <button class="button button-block button-light" ng-click="hide()">隱藏</button> ';
           $file.download(pdf_url,filename,"Downloads/Transcripts",$scope,message,function(){
+            $localStorage.set($scope.year+'_'+$scope.question.question,$scope.transcript_html);
+            // console.log('saving transcript_html',$scope.year+'_'+$scope.question.question,$scope.transcript_html);
             $ionicPopup.alert({
                                 title: "下載成功",
                                 template: "PDF 和 MP3 文件已成功下载。"
@@ -253,7 +298,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
   $scope.comment.rating=[];
   $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
 
-  $scope.rate = function(index)
+  $scope.rateClicked = function(index)
   {
     $scope.hideActionSheet = $ionicActionSheet.show({
       buttons: [
@@ -268,14 +313,14 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
       ],
       titleText: "評分",
       cancelText: "取消",
-      cancel: function(){},
-      buttonClicked: function(clickedIndex){
-        console.log('index ',index,'clickedIndex',clickedIndex);
+      cancel: function (){},
+      buttonClicked: function (clickedIndex) {
+        // console.log('index ',index,'clickedIndex',clickedIndex);
         $scope.comment.rating[index] = clickedIndex+1;
         return true;
       }
     });
-  }
+  };
 
   $scope.submitComment = function(){
     $ionicPopup.confirm({
@@ -285,9 +330,9 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
       if(response)
       {
         var username = $account.user;
-        console.log("http get info: " + username, JSON.stringify($scope.comment));
+        // console.log("http get info: " + username, JSON.stringify($scope.comment));
         $http.get($core.APILocation,{params:{public:true, action:'insert_comment',id:$stateParams.questionID, comment1:$scope.comment.comment[0],comment2:$scope.comment.comment[1],comment3:$scope.comment.comment[2],comment4:$scope.comment.comment[3],rating1:$scope.comment.rating[0],rating2:$scope.comment.rating[1],rating3:$scope.comment.rating[2],rating4:$scope.comment.rating[3], user: username }}).success(function(data){
-          console.log(data);
+          // console.log(data);
           $ionicPopup.alert({
             title: '成功',
             template: "你的評論已被成功上載."
@@ -303,7 +348,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 })
 
 .controller('downloadBrowseController', 
-  function($window, $ionicPlatform, $rootScope, $scope, $ionicScrollDelegate, AudioSvc, $ionicModal, $file) {
+  function($window, $ionicPlatform, $rootScope, $scope, $ionicScrollDelegate, AudioSvc, $ionicModal, $file, $core, $localStorage) {
     $scope.files = [];
  
     $scope.hide = $rootScope.hide;
@@ -313,6 +358,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
     $scope.refresh = function() {
       getFileSystem();
+      $scope.$broadcast('scroll.refreshComplete');
     }
     
     function hasExtension(fileName) {
@@ -407,13 +453,15 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
 
           //Using relative path instead
           //ONLY RELATIVE PATHS WORK IN IOS!!!
-          var downloads_dir = "../Documents/Downloads/";
+          if($rootScope.isIOS)
+            var downloads_dir = "../Documents/Downloads/";
 
           //THE FOLLOWING IS FOR ANDROID
-          //var downloads_dir = file.nativeURL.replace(file.name,'');
-          
+          if($rootScope.isAndroid)
+            var downloads_dir = file.nativeURL.replace(file.name,'');
+
           if (hasExtension(file.name)) {
-            console.log(JSON.stringify(file));
+            // console.log(JSON.stringify(file));
             if (file.name.indexOf('.pdf')>0)
             {
               //$file.openPDF(downloads_dir + file.name,function(){},function(){});
@@ -427,7 +475,7 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
             }*/
             else {
               fsResolver(file.nativeURL, function(fs) {
-                console.log('fs ',JSON.stringify(fs),'audio file',JSON.stringify(file));
+                // console.log('fs ',JSON.stringify(fs),'audio file',JSON.stringify(file));
                 // Play the selected file
 
                 AudioSvc.playAudio(downloads_dir+file.name, function(a, b) {
@@ -441,7 +489,9 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
                 
                 //$scope.transcript_path = downloads_dir + "Transcripts/" + file.name.replace('.mp3','.pdf');
                 $scope.transcript_path = file.nativeURL.replace('file://','').replace('Downloads','Downloads/Transcripts').replace('.mp3','.pdf');
-                console.log($scope.transcript_path);
+                $scope.transcript_html = $localStorage.get(file.name.replace('.mp3',''),'Transcript not found');
+                // console.log(file.name.replace('.mp3',''));
+                // console.log($scope.transcript_path);
                 $scope.loaded = true;
                 $scope.isPlaying = true;
                 $scope.name = file.name;
@@ -522,6 +572,34 @@ angular.module('controllers', ['ionic','dependencies','services','ionic.rating',
   });//ionicPlatform.ready
 })  //Controller
 
+.controller('browseCandidateController', function($scope,$stateParams,$http,$core,$ionicLoading,$state, $ionicPopup, $questionContents){
+  $scope.candidate_displayed = ['A','B','C','D'];
+  $scope.candidate = $stateParams.candidate;
+  $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
+  // console.log($scope.candidate);
+  $scope.refresh = function(){
+    // $scope.max = 8;
+    // $scope.rate = [];
+    $scope.year = $stateParams.year;
+    $scope.questionID = $stateParams.questionID;  
+    $ionicLoading.show({
+          template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
+        });
+    $questionContents.getContentByID($stateParams.questionID, function(data)
+      {
+        $scope.question = data;
+        $scope.rate = data.rate;
+        
+        if(!$scope.$$phase) $scope.$apply();
+        $ionicLoading.hide();
+        // console.log('speaker_rating_average:\n',$scope.rate);
+        $scope.$broadcast('scroll.refreshComplete');
+
+      });
+    
+  };
+  $scope.refresh();
+})
 ;
 
 

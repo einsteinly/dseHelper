@@ -1,5 +1,5 @@
 <ion-modal-view>
-	<ion-header-bar>
+	<ion-header-bar class='bar-royal'>
 	  <h1 class="title">評論</h1>
 	  <div class="buttons">
 	      <button class="button button-clear" ng-click="closeComment()">Close</button>
@@ -11,7 +11,7 @@
 				<div class='item item-divider'>
 				評論 {{$index+1}}: {{question.speaker_assoc[$index]}}
 				</div>
-			  <label class="item item-input item-stacked-label" ng-click='rate($index)'>
+			  <label class="item item-input item-stacked-label" ng-click='rateClicked($index)'>
 			    <button class="button button-clear button-positive" >評分</button>
 			    <br>
 			    <b ng-bind='rating_displayed[comment.rating[$index]-1]'></b>

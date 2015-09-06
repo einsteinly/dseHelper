@@ -1,0 +1,41 @@
+<ion-view view-title="Candidate {{candidate_displayed[candidate]}} ">
+	<ion-nav-buttons side='right'>
+		<button class='button button-clear' ng-click='refresh()'><i class='fa fa-refresh'></i> 刷新</button>
+	</ion-nav-buttons>
+
+  <ion-content>
+  <ion-refresher pulling-text='向下滑動以刷新' on-refresh='refresh()'></ion-refresher>
+
+	<!-- <div class='list card' ng-repeat='comment in question.comment_assoc track by $index'>
+		<div class='item item-divider'>
+		評論者
+		</div>
+		<div class='item item-avatar' >
+		<h2><span><i class='fa fa-user fa-fw'></i></span> {{comment.user}}</h2>
+		</div>
+		<div class='item item-body'>
+			<div class='list'>
+				<div class='item item-text-wrap' ng-repeat='rate in question.rating_assoc[$index].rating track by $index'>
+				<span class="badge badge-assertive">{{rating_displayed[rate - 1]}}</span>
+				考生 {{$index+1}}: <br/>
+				<span class='line-break'>{{comment.comment[$index]}}</span>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+
+	<div class='list card' ng-repeat='comment in question.comment_assoc track by $index'>
+		<div class='item item-avatar' >
+		<img src='resources/img/user.png'>
+		<h2> 評論者: {{comment.user}}</h2>
+		<p> 评分: {{rating_displayed[question.rating_assoc[$index].rating[candidate]-1]}}</p>
+		</div>
+
+		<div class='item item-body'>
+		<span class='line-break'>{{comment.comment[candidate]}}</span>
+		
+		</div>
+  </ion-content>
+</ion-view>
+

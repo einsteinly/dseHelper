@@ -1,7 +1,7 @@
 
 
 angular.module('dependencies',['ionic','ngCordova'])
-.factory('$core', function ($ionicPlatform,$ionicPopup) {
+.factory('$core', function ($ionicPlatform,$ionicPopup, $rootScope) {
     var obj={};
     obj.APILocation = 'http://exam.lixiapps.com/api/api';
     //obj.APILocation = 'debug.php';
@@ -9,7 +9,7 @@ angular.module('dependencies',['ionic','ngCordova'])
     obj.checkNetwork = function(success_callback){
         $ionicPlatform.ready(function() 
         {
-            console.log(JSON.stringify(window.Connection),JSON.stringify(navigator.connection));
+            // console.log(JSON.stringify(window.Connection),JSON.stringify(navigator.connection));
             if(window.Connection) 
             {
                 if(navigator.connection.type !== Connection.NONE) 
@@ -25,6 +25,23 @@ angular.module('dependencies',['ionic','ngCordova'])
                 }
             }
         });
+    };
+
+    obj.isIOS = function(callback)
+    {
+        if($rootScope.isIOS) 
+            {
+                // console.log('isIOS');
+                callback();
+            }
+    };
+
+    obj.isAndroid = function(callback)
+    {
+        if($rootScope.isAndroid) {
+            // console.log('isAndroid');
+            callback();
+        }
     };
 
     return obj;
@@ -82,7 +99,7 @@ angular.module('dependencies',['ionic','ngCordova'])
 })
 
 .factory('$localStorage', ['$window', function($window) {
-    console.log(JSON.stringify($window.localStorage));
+    // console.log(JSON.stringify($window.localStorage));
   return {
     set: function(key, value) {
       $window.localStorage[key] = value;

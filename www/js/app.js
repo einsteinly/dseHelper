@@ -1,9 +1,3 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'controllers'])
 
 .run(function($ionicPlatform,$http,$rootScope,$ionicLoading) {
@@ -18,6 +12,9 @@ angular.module('starter', ['ionic', 'controllers'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    $rootScope.isIOS = ionic.Platform.isIOS();
+    $rootScope.isAndroid = ionic.Platform.isAndroid();
     });
 
 
@@ -61,7 +58,7 @@ angular.module('starter', ['ionic', 'controllers'])
   })
 
   .state('app.browseYear', {
-    url: "/browse/:year",
+    url: "/browse/:year/:category",
     views: {
       'menuContent': {
         templateUrl: "templates/browse.year.html",
@@ -71,12 +68,23 @@ angular.module('starter', ['ionic', 'controllers'])
   })
 
   .state('app.browseQuestions', {
-    url: "/browse/:year/:questionID",
+    url: "/browse/:year/:category/:questionID",
     cache:false,
     views: {
       'menuContent': {
         templateUrl: "templates/browse.questions.html",
         controller: 'browseQuestionsController'
+      }
+    }
+  })
+
+  .state('app.browseCandidate', {
+    url: "/browse/:year/:questionID/:category/:candidate",
+    cache:false,
+    views: {
+      'menuContent': {
+        templateUrl: "templates/browse.candidate.html",
+        controller: 'browseCandidateController'
       }
     }
   })
