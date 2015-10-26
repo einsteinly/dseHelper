@@ -1,10 +1,10 @@
 <ion-view view-title="{{question.question}} -- {{year}} ">
 	<ion-nav-buttons side='right'>
-		<button class='button button-clear' ng-click='refresh()'><i class='fa fa-refresh'></i> 刷新</button>
-	</ion-nav-buttons>
+<!-- 		<button class='button button-clear' ng-click='refresh()'><i class='fa fa-refresh'></i> 刷新</button>
+ -->	</ion-nav-buttons>
 
   <ion-content > 
-  <ion-refresher pulling-text='向下滑動以刷新' on-refresh='refresh()'></ion-refresher>
+  <!-- <ion-refresher pulling-text='向下滑動以刷新' on-refresh='refresh()'></ion-refresher> -->
     <div class="video-container">
 		<iframe sandbox='allow-same-origin allow-scripts' src="{{trustSrc(question.youtube_link)}} " frameborder="0" allowfullscreen></iframe>		
 	</div>
@@ -18,25 +18,25 @@
 	<button class='button button-block button-assertive' ng-click='commentShow()'> 評論 </button>
 
 	<div class='list'>
-		<a class='item item-avatar' href='#/app/browse/{{year}}/{{category}}/{{questionID}}/0'>
+		<a class='item item-avatar' href='#/app/browse/{{questionID}}/0'>
 			<img src='resources/img/A.png'>
 			<h2>Candidate A</h2>
 			<p> {{question.profile_assoc[0]}}</p>
 			<span class='badge badge-assertive'>{{rate[0]}}</span>
 		</a>
-		<a class='item item-avatar' href='#/app/browse/{{year}}/{{category}}/{{questionID}}/1'>
+		<a class='item item-avatar' href='#/app/browse/{{questionID}}/1'>
 			<img src='resources/img/B.png'>
 			<h2>Candidate B</h2>
 			<p> {{question.profile_assoc[1]}}</p>
 			<span class='badge badge-assertive'>{{rate[1]}}</span>
 		</a>
-		<a class='item item-avatar' href='#/app/browse/{{year}}/{{category}}/{{questionID}}/2'>
+		<a class='item item-avatar' href='#/app/browse/{{questionID}}/2'>
 			<img src='resources/img/C.png'>
 			<h2>Candidate C</h2>
 			<p> {{question.profile_assoc[2]}}</p>
 			<span class='badge badge-assertive'>{{rate[2]}}</span>
 		</a>
-		<a class='item item-avatar' href='#/app/browse/{{year}}/{{category}}/{{questionID}}/3'>
+		<a class='item item-avatar' href='#/app/browse/{{questionID}}/3'>
 			<img src='resources/img/D.png'>
 			<h2>Candidate D</h2>
 			<p> {{question.profile_assoc[3]}}</p>

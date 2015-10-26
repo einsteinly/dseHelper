@@ -7,9 +7,9 @@
 	</ion-header-bar>
 	<ion-content>
 		<div class="list">
-			<div ng-repeat='speaker in question.speaker_assoc track by $index'>
+			<div ng-repeat='speaker in speaker_assoc track by $index'>
 				<div class='item item-divider'>
-				評論 {{$index+1}}: {{question.speaker_assoc[$index]}}
+				{{speaker}}
 				</div>
 			  <label class="item item-input item-stacked-label" ng-click='rateClicked($index)'>
 			    <button class="button button-clear button-positive" >評分</button>

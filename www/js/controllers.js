@@ -65,7 +65,7 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
     }
     });
 }
-
+  
 })
 
 
@@ -123,92 +123,122 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
   };
 })
 
-.controller('browseController', function($scope,$http,$core,$ionicLoading){
+.controller('browseGroupController', function($scope,$http,$core,$ionicLoading, $data, $ionicActionSheet, ptrService){
   $core.checkNetwork(function(){
-  $ionicLoading.show({
-      template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-    });
-    
-    $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
-      // console.log(data);
 
-      // for(var i=2010;i<2015;i++)
-      // {
-      //   if(data[String(i)] != null)
-      //   $scope['n'+String(i)] = data[String(i)].length;
-      //   else $scope['n'+String(i)]=0;
-      // }
-      $scope.groupCount = {};  //discussion_type=true
-      $scope.individualCount = {};
-      angular.forEach(data, function(questions, year){
-        $scope.groupCount[year]=0;
-        $scope.individualCount[year]=0;
-        angular.forEach(questions, function(question, key){
-          if(question.discussion_type == 1) $scope.groupCount[year]++;
-          else $scope.individualCount[year]++;
-        });
-      });
-      // console.log(JSON.stringify($scope.count));
-      $ionicLoading.hide();
-    });
-  });
-})
+  $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
+  $scope.sortOrder = "question_year";
+  $scope.reverse = true;
 
-.controller('browseYearController', function($scope,$http,$core,$stateParams,$ionicLoading){
-  $scope.year = $stateParams.year;
-  $scope.category = $stateParams.category;
-  var category = $scope.category;
-  var category_displayed = ['個人討論','小組討論'];
-  $scope.category_displayed = category_displayed[$scope.category];
+  $scope.sort = function() {
+      var hideSort = $ionicActionSheet.show({
+       buttons: [
+         { text: '<center>題號</center>' },
+         { text: '<center>平均分數</center>' },
+         { text: '<center>年份</center>' }
+       ],
+       
+       cancelText: '<center>取消</center>',
+       cancel: function() {},
+       buttonClicked: function(clickedIndex) {
+         switch(clickedIndex){
+          case 0: {
+            $scope.sortOrder = 'question';
+            $scope.reverse = false;
+            break;
+          }
+          case 1:{
+            $scope.sortOrder = 'average_rating';
+            $scope.reverse = true;
+            break;
+          }
 
-  // if(category) $scope.backgroundStyle = 'background:url( resources/img/group.jpg); background-repeat: no-repeat; background-size: 100%';
-  // else $scope.backgroundStyle = 'background:url( resources/img/individual.jpg); background-repeat: no-repeat; background-size: 100%';
+          case 2: {
+            $scope.sortOrder = 'question_year';
+            $scope.reverse = true;
+            break;
+          }
+         }
+       }
+     });
+  }
+
   $scope.refresh = function()
   {
-    $ionicLoading.show({
-        template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-      });
-      
-    $http.get($core.APILocation ,{params:{ public:true, action:'get_questions'}}).success(function(data){
-      // console.log(JSON.stringify(data));
-
-      if(data[$stateParams.year] != null)
-      $scope.questions = data[$stateParams.year];
-      else $scope.questions=[];
-      
-      angular.forEach($scope.questions,function(question,key){
-        // console.log('entered iteration loop', key,question);
-        if(question.discussion_type == $scope.category)
-        {
-          question.rating_assoc = angular.fromJson(question.rating);
-          question.comment_assoc = angular.fromJson(question.comment);
-          if(question.rating_assoc != null)
-          question.rating_count = question.rating_assoc.length;
-          else question.rating_count = 0;
-
-          if(question.comment_assoc != null)
-          question.comment_count = question.comment_assoc.length;
-          else question.comment_count = 0;
-        }
-        else
-        {
-          $scope.questions.splice(key,1);
-        }
-        });
-
-      $ionicLoading.hide();
+    $data.get_all_questions().then(function(){
+      $scope.question_data = $data.database_group;
+      // console.log(JSON.stringify(question_data));
       $scope.$broadcast('scroll.refreshComplete');
+      if(!$scope.$$phase) $scope.$apply();
     });
   }
-  $scope.refresh();
-  
+
+  $scope.$on("$ionicView.loaded", function() {
+    ptrService.triggerPtr('ptr_content'); //ptr === pull to refresh
+    $scope.refresh();
+  });
+})
 })
 
+.controller('browseIndividualController', function($scope,$http,$core,$ionicLoading, $data, $ionicActionSheet, ptrService){
+  $core.checkNetwork(function(){
 
-.controller('browseQuestionsController', function($scope,$stateParams,$http,$core,$ionicLoading,$sce,$state, $ionicPopup, $file, $account, $ionicModal, $ionicActionSheet, $questionContents, $localStorage){
+  $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
+  $scope.sortOrder = "question_year";
+  $scope.reverse = true;
 
-  $scope.category = $stateParams.category;
-  $scope.year = $stateParams.year;
+  $scope.sort = function() {
+      var hideSort = $ionicActionSheet.show({
+       buttons: [
+         { text: '<center>題號</center>' },
+         { text: '<center>平均分數</center>' },
+         { text: '<center>年份</center>' }
+       ],
+       
+       cancelText: '<center>取消</center>',
+       cancel: function() {},
+       buttonClicked: function(clickedIndex) {
+         switch(clickedIndex){
+          case 0: {
+            $scope.sortOrder = 'question';
+            $scope.reverse = false;
+            break;
+          }
+          case 1:{
+            $scope.sortOrder = 'average_rating';
+            $scope.reverse = true;
+            break;
+          }
+
+          case 2: {
+            $scope.sortOrder = 'question_year';
+            $scope.reverse = true;
+            break;
+          }
+         }
+       }
+     });
+  }
+
+  $scope.refresh = function()
+  {
+    $data.get_all_questions().then(function(){
+      $scope.question_data = $data.database_individual;
+      // console.log(JSON.stringify(question_data));
+      $scope.$broadcast('scroll.refreshComplete');
+      if(!$scope.$$phase) $scope.$apply();
+    });
+  }
+  
+  $scope.$on("$ionicView.loaded", function() {
+    ptrService.triggerPtr('ptr_content'); //ptr === pull to refresh
+    $scope.refresh();
+  });
+})
+})
+
+.controller('browseQuestionsController', function($scope,$stateParams,$http,$core,$ionicLoading,$sce,$state, $ionicPopup, $file, $account, $ionicModal, $ionicActionSheet,  $localStorage, $data){
+
   $scope.questionID = $stateParams.questionID;  
 
 
@@ -218,24 +248,19 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
   };
 
   $scope.refresh = function(){
-    // $scope.max = 8;
-    // $scope.rate = [];
     
-    $ionicLoading.show({
-          template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-        });
-    $questionContents.getContentByID($stateParams.questionID, function(data)
-      {
-        $scope.question = data;
-        $scope.rate = data.rate;
-        $scope.transcript_html = data.transcript_html;
-        
-        // console.log($scope.html_url);
-        if(!$scope.$$phase) $scope.$apply();
-        $ionicLoading.hide();
-        // console.log('speaker_rating_average:\n',$scope.rate);
-        $scope.$broadcast('scroll.refreshComplete');
-      });
+    var data = $data.get_question_by_id($stateParams.questionID);
+  
+    $scope.question = data;
+    $scope.rate = data.rate;
+    $scope.transcript_html = data.transcript_html;
+    $scope.year = data.question_year;
+    
+    if(!$scope.$$phase) $scope.$apply();
+    $ionicLoading.hide();
+    console.log('speaker_rating_average:\n',$scope.rate);
+    $scope.$broadcast('scroll.refreshComplete');
+
     
   };
   
@@ -271,7 +296,8 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
     });
   };
 
-
+  //for adding comments
+  $scope.speaker_assoc = ['Candidate A','Candidate B','Candidate C','Candidate D'];
   $ionicModal.fromTemplateUrl("templates/add_comment.html", {scope:$scope,animation:'slide-in-up'}).then(function(modal){
     $scope.modalComment = modal;
   });
@@ -322,7 +348,8 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
     });
   };
 
-  $scope.submitComment = function(){
+$scope.submitComment = function(){
+  // console.log('$scope.comment.comment.length==4 && $scope.comment.rating.length: '+JSON.stringify($scope.comment));
     $ionicPopup.confirm({
       title: "提交評論",
       template: "確認提交?"
@@ -332,14 +359,24 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
         var username = $account.user;
         // console.log("http get info: " + username, JSON.stringify($scope.comment));
         $http.get($core.APILocation,{params:{public:true, action:'insert_comment',id:$stateParams.questionID, comment1:$scope.comment.comment[0],comment2:$scope.comment.comment[1],comment3:$scope.comment.comment[2],comment4:$scope.comment.comment[3],rating1:$scope.comment.rating[0],rating2:$scope.comment.rating[1],rating3:$scope.comment.rating[2],rating4:$scope.comment.rating[3], user: username }}).success(function(data){
-          // console.log(data);
-          $ionicPopup.alert({
-            title: '成功',
-            template: "你的評論已被成功上載."
-          });
-          $scope.closeComment();
-          $scope.refresh();
-          $scope.$parent.refresh();
+          // console.log('submitted','data',data);
+          if(data == true)
+          {
+            $ionicPopup.alert({
+              title: '成功',
+              template: "你的評論已被成功上載."
+            });
+            $scope.closeComment();
+            $scope.refresh();
+          }
+          else
+          {
+            $ionicPopup.alert({
+              title: '錯誤',
+              template: "發生了錯誤.您的評論還沒有被上傳."
+            });
+          }
+          // $scope.$parent.refresh();
         });
       }
     });
@@ -348,10 +385,11 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
 })
 
 .controller('downloadBrowseController', 
-  function($window, $ionicPlatform, $rootScope, $scope, $ionicScrollDelegate, AudioSvc, $ionicModal, $file, $core, $localStorage) {
+  function($window, $ionicPlatform, $rootScope, $scope, $ionicScrollDelegate, AudioSvc, $ionicModal, $file, $core, $localStorage, $sharedContent, $state) {
     $scope.files = [];
  
     $scope.hide = $rootScope.hide;
+    $scope.player = function() {$state.go('app.player');}
 
     //Create the Downloads folder if it does not exist
     $file.initDownloadDirectory();
@@ -386,26 +424,13 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
       return arr;
     };
 
-    $ionicModal.fromTemplateUrl('templates/player.html', {
-      scope: $scope
-    }).then(function(modal) {
-      $scope.modal = modal;
-    });
-
-    $rootScope.hidePlayer = function() {
-      $scope.modal.hide();
-    };
- 
-    $rootScope.player = function() {
-      $scope.modal.show();
-    };
+    
 
     $scope.open_transcript = function(transcript_path){
       $file.openPDF(transcript_path,function(){},function(){});
     };
     
-    $scope.player = $rootScope.player;
-    $scope.hidePlayer = $rootScope.hidePlayer;
+
     function getFileSystem(callback)
     {
       $rootScope.show('正在打開文件夾,請稍後...');
@@ -475,47 +500,15 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
             }*/
             else {
               fsResolver(file.nativeURL, function(fs) {
-                // console.log('fs ',JSON.stringify(fs),'audio file',JSON.stringify(file));
                 // Play the selected file
 
-                AudioSvc.playAudio(downloads_dir+file.name, function(a, b) {
-                  //console.log(a, b, angular.toJson(file));
-                  $scope.position = Math.ceil(a / b * 100);
-                  if (a < 0) {
-                    $scope.stopAudio();
-                  }
-                  if (!$scope.$$phase) $scope.$apply();
-                });
-                
-                //$scope.transcript_path = downloads_dir + "Transcripts/" + file.name.replace('.mp3','.pdf');
-                $scope.transcript_path = file.nativeURL.replace('file://','').replace('Downloads','Downloads/Transcripts').replace('.mp3','.pdf');
-                $scope.transcript_html = $localStorage.get(file.name.replace('.mp3',''),'Transcript not found');
-                // console.log(file.name.replace('.mp3',''));
-                // console.log($scope.transcript_path);
-                $scope.loaded = true;
-                $scope.isPlaying = true;
-                $scope.name = file.name;
-                $scope.path = file.fullPath;
- 
-                // show the player
+                $sharedContent.setter('audioPath',downloads_dir+file.name);
+                $sharedContent.setter('transcript_path', file.nativeURL.replace('file://','').replace('Downloads','Downloads/Transcripts').replace('.mp3','.pdf'));
+                $sharedContent.setter('transcript_html', $localStorage.get(file.name.replace('.mp3',''),'Transcript not found'));
+                $sharedContent.setter('audioName', file.name);
+
                 $scope.player();
- 
-                $scope.pauseAudio = function() {
-                  AudioSvc.pauseAudio();
-                  $scope.isPlaying = false;
-                  if (!$scope.$$phase) $scope.$apply();
-                };
-                $scope.resumeAudio = function() {
-                  AudioSvc.resumeAudio();
-                  $scope.isPlaying = true;
-                  if (!$scope.$$phase) $scope.$apply();
-                };
-                $scope.stopAudio = function() {
-                  AudioSvc.stopAudio();
-                  $scope.loaded = false;
-                  $scope.isPlaying = false;
-                  if (!$scope.$$phase) $scope.$apply();
-                };
+
  
               });
             }
@@ -572,33 +565,82 @@ angular.module('controllers', ['ionic','dependencies','services','ngCordova'])
   });//ionicPlatform.ready
 })  //Controller
 
-.controller('browseCandidateController', function($scope,$stateParams,$http,$core,$ionicLoading,$state, $ionicPopup, $questionContents){
+.controller('browseCandidateController', function($scope,$stateParams,$http,$core,$ionicLoading,$state, $ionicPopup,  $data){
   $scope.candidate_displayed = ['A','B','C','D'];
   $scope.candidate = $stateParams.candidate;
   $scope.rating_displayed=['U','1','2','3','4','5','5*','5**'];
+  $scope.year = $stateParams.year;
+  $scope.questionID = $stateParams.questionID;  
   // console.log($scope.candidate);
   $scope.refresh = function(){
-    // $scope.max = 8;
-    // $scope.rate = [];
-    $scope.year = $stateParams.year;
-    $scope.questionID = $stateParams.questionID;  
-    $ionicLoading.show({
-          template: "<i class='fa fa-pulse fa-spinner'></i> 加載中..."
-        });
-    $questionContents.getContentByID($stateParams.questionID, function(data)
-      {
+
+    var data = $data.get_question_by_id($stateParams.questionID);
         $scope.question = data;
         $scope.rate = data.rate;
+
         
         if(!$scope.$$phase) $scope.$apply();
         $ionicLoading.hide();
-        // console.log('speaker_rating_average:\n',$scope.rate);
+        // console.log('$scope.question:\n'+ JSON.stringify($scope.question));
         $scope.$broadcast('scroll.refreshComplete');
-
-      });
     
   };
   $scope.refresh();
+})
+
+
+.controller('playerController', function($scope, AudioSvc, $sharedContent, $ionicModal, $file) {
+  var audioPath = $sharedContent.getter('audioPath');
+
+  $scope.hidePlayer = function() {
+    $scope.modal.hide();
+  };
+
+  $scope.open_transcript = function(transcript_path){
+      $file.openPDF(transcript_path,function(){},function(){});
+    };
+
+  AudioSvc.playAudio(audioPath, function(a, b) {
+    //console.log(a, b, angular.toJson(file));
+    $scope.position = Math.ceil(a / b * 100);
+    if (a < 0) {
+      $scope.stopAudio();
+    }
+    if (!$scope.$$phase) $scope.$apply();
+  });
+
+  //$scope.transcript_path = downloads_dir + "Transcripts/" + file.name.replace('.mp3','.pdf');
+  $scope.transcript_path = $sharedContent.getter('transcript_path');
+  $scope.transcript_html = $sharedContent.getter('transcript_html');
+  // console.log(file.name.replace('.mp3',''));
+  // console.log($scope.transcript_path);
+  $scope.loaded = true;
+  $scope.isPlaying = true;
+  $scope.name = $sharedContent.getter('audioName');
+  // $scope.path = file.fullPath;
+
+
+
+  $scope.pauseAudio = function() {
+    AudioSvc.pauseAudio();
+    $scope.isPlaying = false;
+    if (!$scope.$$phase) $scope.$apply();
+  };
+  $scope.resumeAudio = function() {
+    AudioSvc.resumeAudio();
+    $scope.isPlaying = true;
+    if (!$scope.$$phase) $scope.$apply();
+  };
+  $scope.stopAudio = function() {
+    AudioSvc.stopAudio();
+    $scope.loaded = false;
+    $scope.isPlaying = false;
+    if (!$scope.$$phase) $scope.$apply();
+  };
+})
+
+.controller('homeController', function($scope, $state) {
+  $scope.hello = 'hello';
 })
 ;
 

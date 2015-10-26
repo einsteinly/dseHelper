@@ -7,9 +7,9 @@
 		 <button class='button button-clear ' ng-click='player()' > <i class='fa fa-play-circle'></i> 播放中</button>
 
 	</ion-nav-buttons>
-    <ion-content>
+    <ion-content class='background'>
     <ion-refresher pulling-text='向下滑動以刷新' on-refresh='refresh()'></ion-refresher>
-        <ion-item class="item-icon-left item-icon-right" ng-repeat="file in files" type="item-text-wrap" ng-click="showSubDirs(file)">
+        <ion-item class="item-icon-left item-icon-right transparent" ng-repeat="file in files" type="item-text-wrap" ng-click="showSubDirs(file)">
             <i class="icon" ng-class="{'ion-android-folder' : file.isDirectory, 'fa fa-play' : (file.name.indexOf('.mp3')>0),'fa fa-file-pdf-o' : (file.name.indexOf('.pdf')>0), 'ion-arrow-up-c' : file.isUpNav}"></i>
             <h2>{{file.name}}</h2>
             <i class="icon ion-chevron-right icon-accessory" ng-show="file.isDirectory"></i>

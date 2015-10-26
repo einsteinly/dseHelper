@@ -1,15 +1,14 @@
-<ion-view view-title="<i class='icon ion-person-stalker'></i> 小組討論">
+<ion-view view-title="<i class='icon ion-person'></i> 個人回應">
     <ion-nav-buttons side='right'>
         <!-- <button class='button button-clear' ng-click='refresh()'><i class='fa fa-refresh'></i> 刷新</button> -->
   <button class='button button-clear' ng-click='sort()'><i class='fa fa-list'></i> 排序</button> 
 
     </ion-nav-buttons>
-  <ion-content class='background' delegate-handle='ptr_content'>
+  <ion-content class='background' delegate-handle='ptr_content' >
   <ion-refresher pulling-text='向下滑動以刷新' on-refresh='refresh()'></ion-refresher>
-
     <ul class='list'>
 
-        <a class='item transparent' ng-repeat="question in question_data | orderBy:sortOrder:reverse track by $index" href='#/app/browse/{{question.id}}'>
+        <a class='item transparent' ng-repeat="question in question_data | orderBy:sortOrder:reverse track by $index" href='#/app/browse/{{question.id}}' >
 
         <h2>{{question.question_year}} 年：   {{question.question}}</h2>
         <p>{{question.question_full}}</p>

@@ -18,6 +18,70 @@ $dark:                            #444 !default;
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
+
+/* Empty. Add your own CSS if you like */
+@font-face {
+    font-family: chinese;
+    src: url('www/resources/fonts/chinese.otf');
+}
+
+@font-face {
+    font-family: english;
+    src: url('www/resources/fonts/english.otf');
+}
+
+p, h1, h2, h3, h4, h5, h6, i {
+    font-family: 'english', 'chinese', serif;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; height: 0; overflow: hidden;
+}
+ 
+.video-container iframe,
+.video-container object,
+.video-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.line-break {
+	white-space: pre;
+}
+
+.player_footer {
+	position:absolute;
+	bottom:0px;
+	width:100%;
+}
+
+
+
+.background {
+    background-image: url('www/resources/img/home.png');
+    background-size: auto 100% ;
+    background-position: center;
+    color: #fff;
+}
+
+.transparent {
+    background-color: rgba(0,0,0,100);
+    color:#fff;
+}
+.transparent h2 {
+    color: #fff !important;
+}
+
+$font-family-base:  english, chinese  !default;
+
+
+
+
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 

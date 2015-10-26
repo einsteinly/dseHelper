@@ -1,6 +1,6 @@
 <ion-side-menus enable-menu-with-back-views="false">
   <ion-side-menu-content>
-    <ion-nav-bar class="bar-balanced">
+    <ion-nav-bar class="bar-royal">
       <ion-nav-back-button>
       </ion-nav-back-button>
 
@@ -12,33 +12,43 @@
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
  
-  <ion-side-menu side="left" expose-aside-when="large">
-    <ion-header-bar class="bar-balanced">
-<!--       <h1 class="title"><i class='fa fa-fw fa-arrow-right'></i> 滑動打開</h1>
- -->    </ion-header-bar>
-    <ion-content>
+  <ion-side-menu side="left" expose-aside-when="large" >
+    <!-- <ion-header-bar class="bar-royal">
+      <h1 class="title"><i class='fa fa-fw fa-arrow-right'></i> 滑動打開</h1>
+    </ion-header-bar> -->
+    <ion-content class='dark-background large-font'>
       <ion-list>
-        <ion-item menu-close ng-click="login()" ng-if='user==null'>
+        <a menu-close ui-sref-active="active" class='transparent item' ui-sref='app.home'>
+          <i class="fa fa-home fa-fw"></i> 主頁
+        </a>
+
+        <a menu-close ui-sref-active="active" class='transparent item' ng-click="login()" ng-if='user==null'>
           <i class="fa fa-sign-in fa-fw"></i> 老師登陸
-        </ion-item>
+        </a>
 
-        <ion-item menu-close ng-if='user!=null' ui-sref="app.profile">
-        <span>
+        <a menu-close ui-sref-active="active" class='transparent item' ng-if='user!=null' ui-sref="app.profile">
           <i class="fa fa-user fa-fw"></i> {{user}}
-          </span>
-        </ion-item>
+        </a>
 
-        <ion-item menu-close ui-sref='app.browse'>
-          <i class="fa fa-fw fa-search"></i> 瀏覽
-        </ion-item>
-  
-        <ion-item menu-close ui-sref='app.downloadBrowse'>
+        <a menu-close ui-sref-active="active" class='transparent item' ui-sref='app.browse2'>
+          <i class="fa fa-user fa-fw"></i> 個人回應
+        </a>
+
+        <a menu-close ui-sref-active="active" class='transparent item' ui-sref='app.browse'>
+          <i class="fa fa-users fa-fw"></i> 小組討論
+        </a>
+
+        <a menu-close ui-sref-active="active" class='transparent item' ui-sref='app.downloadBrowse'>
           <i class="fa fa-fw fa-download"></i> 已下載
-        </ion-item>
+        </a>
+
+        <a menu-close ui-sref-active="active" class='transparent item' ui-sref='app.player'>
+          <i class='fa fa-play-circle fa-fw'></i> 播放中
+        </a>
         
-        <ion-item menu-close ng-click="signout()" ng-if='user!=null'>
+        <a menu-close ui-sref-active="active" class='transparent item' ng-click="signout()" ng-if='user!=null'>
           <i class="fa fa-sign-out fa-fw"></i> 登出
-        </ion-item>
+        </a>
 
       </ion-list>
     </ion-content>
